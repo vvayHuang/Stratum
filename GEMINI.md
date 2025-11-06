@@ -57,7 +57,8 @@ The API key is managed through a `.env` file and exposed to the server-side of t
 
 The project uses the GSAP library for animations.
 
-- **Hero Component (`components/Hero.vue`):** When the CTA button is clicked, the hero component (input and button) animates down and fades out.
+- **Hero Component (`components/Hero.vue`):** When the CTA button is clicked, the hero component (input and button) animates down and fades out. A loader is displayed within the Hero component while waiting for the API response.
 - **Cards Component (`components/Cards.vue`):** When the CTA button is clicked, the cards animate out of view with a stagger effect.
+- **Loader (`pages/index.vue`):** A prominent loader with text and a GSAP fade-in animation is displayed in the main page while the API call is in progress.
 
-Both animations are triggered simultaneously from the `pages/index.vue` component.
+Both the Hero and Cards animations are triggered simultaneously from the `pages/index.vue` component.
