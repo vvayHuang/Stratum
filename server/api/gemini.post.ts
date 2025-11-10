@@ -1,53 +1,39 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 export default defineEventHandler(async (event) => {
   const { prompt } = await readBody(event);
   const runtimeConfig = useRuntimeConfig();
   const apiKey = runtimeConfig.geminiApiKey;
 
   if (!prompt) {
+    event.node.res.statusCode = 400;
     return { error: 'Prompt is required' };
   }
 
   if (!apiKey) {
+    event.node.res.statusCode = 500;
     return { error: 'Gemini API key is not configured on the server.' };
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent?key=${apiKey}`;
-
-  const requestBody = {
-    contents: [
-      {
-        parts: [
-          {
-            text: `You are a career advisor. Based on the user's interests, you will suggest 8 to 12 potential job titles with a brief description for each. The response should only contain the list of job titles and descriptions. User's interest: "${prompt}"`,
-          },
-        ],
-      },
-    ],
-  };
-
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Error from Gemini API:', errorData);
-      return { error: `Failed to fetch response from Gemini: ${errorData.error.message}` };
-    }
+    const fullPrompt = `You are a career advisor. Your response MUST be only a numbered list of 8 to 12 potential job titles with a brief description for each, based on the user's interest. Do NOT include any introductory or concluding sentences. The format for each item must be exactly: a number, a period, a space, the job title in double asterisks, a colon, a space, and then the description. User's interest: "${prompt}"`;
 
-    const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
+    const result = await model.generateContent(fullPrompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    return { text };
 
-    return {
-      response: text,
-    };
   } catch (error) {
-    console.error('Error fetching from Gemini:', error);
-    return { error: 'Failed to fetch response from Gemini' };
+    event.node.res.statusCode = 500;
+    let errorMessage = 'Failed to fetch response from Gemini due to a server error.';
+    if (error instanceof Error) {
+        errorMessage = error.message;
+    }
+    console.error('Error from Gemini API:', error);
+    return { error: errorMessage };
   }
 });

@@ -2,7 +2,7 @@
   <div
     class="overflow-x-auto scrollbar-hide -mx-[calc(50vw-50%)] px-[calc(50vw-50%)]"
   >
-    <div ref="cardsContainer" class="flex gap-8 min-w-min py-2">
+    <div ref="cardsContainer" class="flex gap-8 min-w-min py-2 overflow-hidden">
       <div
         v-for="n in 6"
         :key="n"
@@ -45,13 +45,15 @@ onMounted(() => {
 });
 
 const playAnimation = () => {
-  gsap.to(cardsContainer.value.children, {
+  const tl = gsap.timeline(); // Create a timeline for better control
+  tl.to(cardsContainer.value.children, {
     y: 100,
-    opacity: 0,
+    autoAlpha: 0,
     duration: 0.5,
     stagger: 0.1,
     delay: 0.2, // Add a slight delay
   });
+  return tl; // Return the timeline
 };
 
 defineExpose({ playAnimation });

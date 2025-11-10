@@ -8,27 +8,27 @@
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
-        <div class="container-centered w-full">
-          <Hero ref="heroComponent" @show-money="handleShowMoney" :is-loading="isLoading" />
+        <div class="container-centered w-full overflow-hidden">
+          <Hero
+            ref="heroComponent"
+            @show-money="handleShowMoney"
+            :is-loading="isLoading"
+          />
         </div>
       </div>
 
-      <div v-if="isLoading" ref="loaderContainer" class="container-centered mt-10 flex items-center justify-center">
-        <svg class="animate-spin h-16 w-16 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <p class="ml-4 text-lg">Loading...</p>
+      <div
+        v-if="isLoading || ideas.length > 0"
+        ref="loaderContainer"
+        class="container-centered my-10"
+      >
+        <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" @reset="handleReset" />
       </div>
       <div v-if="error" class="container-centered mt-10">
         <p class="text-red-500">{{ error }}</p>
       </div>
-      <div v-if="openAIResponse" class="container-centered mt-10">
-        <h2 class="text-2xl font-bold mb-4">Here are some ideas:</h2>
-        <pre class="whitespace-pre-wrap">{{ openAIResponse }}</pre>
-      </div>
 
-      <section class="mt-auto">
+      <section class="mt-auto" v-show="!isLoading && ideas.length === 0">
         <Cards ref="cardsComponent" />
       </section>
     </main>
@@ -36,36 +36,62 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed, nextTick } from "vue";
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import Cards from "~/components/Cards.vue";
+import PromptLayout from "~/components/PromptLayout.vue";
 
-const openAIResponse = ref("");
+const geminiResponse = ref("");
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
 const loaderContainer = ref(null);
 const isLoading = ref(false);
+const prompt = ref("");
 
 watch(isLoading, (newValue) => {
   if (newValue) {
-    gsap.from(loaderContainer.value, { opacity: 0, duration: 0.5 });
+    nextTick(() => {
+      if (loaderContainer.value) {
+        gsap.fromTo(
+          loaderContainer.value,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5 }
+        );
+      }
+    });
   }
 });
 const error = ref(null);
 
-const handleShowMoney = async (prompt) => {
-  isLoading.value = true;
-  error.value = null;
-  openAIResponse.value = "";
+const ideas = computed(() => {
+  if (!geminiResponse.value) return [];
 
-  if (heroComponent.value) {
-    heroComponent.value.playHeroAnimation();
+  const regex = /\d+\.\s*\*\*(.*?)\*\*:\s*([\s\S]*?)(?=\d+\.\s*\*\*|$)/g;
+  let match;
+  const allIdeas = [];
+  while ((match = regex.exec(geminiResponse.value)) !== null) {
+    allIdeas.push({ title: match[1].trim(), description: match[2].trim() });
   }
-  if (cardsComponent.value) {
-    cardsComponent.value.playAnimation();
-  }
+  return allIdeas;
+});
+
+const handleShowMoney = async (p) => {
+  console.log("handleShowMoney called!");
+  prompt.value = p;
+  error.value = null;
+  geminiResponse.value = "";
+
+  const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
+  const cardsAnim = cardsComponent.value ? cardsComponent.value.playAnimation() : null;
+
+  await Promise.all([
+    heroAnim ? heroAnim : Promise.resolve(),
+    cardsAnim ? cardsAnim : Promise.resolve(),
+  ]);
+
+  isLoading.value = true;
 
   try {
     const res = await fetch("/api/gemini", {
@@ -73,22 +99,31 @@ const handleShowMoney = async (prompt) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt: p }),
     });
 
     if (!res.ok) {
-      throw new Error("Failed to fetch response from OpenAI");
+      console.error("Fetch response not OK:", res);
+      const errorData = await res.json().catch(() => ({ error: "Invalid JSON response" }));
+      throw new Error(errorData.error || "Failed to fetch response from Gemini");
     }
 
     const data = await res.json();
-    openAIResponse.value = data.response;
-    if (cardsComponent.value) {
-      cardsComponent.value.playAnimation();
-    }
+    geminiResponse.value = data.text;
+
   } catch (e) {
+    console.error("Error in handleShowMoney:", e);
     error.value = e.message;
   } finally {
     isLoading.value = false;
+  }
+};
+
+const handleReset = () => {
+  geminiResponse.value = "";
+  prompt.value = "";
+  if (heroComponent.value) {
+    heroComponent.value.resetAnimation();
   }
 };
 </script>

@@ -20,11 +20,7 @@ To get started with this project, follow these steps:
     ```
 
 2.  **Set up your API key:**
-    - Create a `.env` file in the root of the project.
-    - Add your Gemini API key to the `.env` file as follows:
-      ```
-      GEMINI_API_KEY=your-api-key-here
-      ```
+    - Refer to `GEMINI_API_KEY.md` for detailed instructions on how to obtain and configure your Gemini API key.
 
 3.  **Run the development server:**
     ```bash
@@ -49,16 +45,26 @@ To get started with this project, follow these steps:
 
 # API Integration
 
-The project is integrated with the Google Gemini API to provide career advice based on user input. The integration is handled by a server-side API route located at `server/api/gemini.post.ts`. This route takes a user's prompt, communicates with the Gemini API, and returns the generated response.
-
-The API key is managed through a `.env` file and exposed to the server-side of the Nuxt application via the `runtimeConfig` in `nuxt.config.ts`.
+The project is integrated with the Google Gemini API to provide career advice based on user input.
+- The integration is handled by a server-side API route located at `server/api/gemini.post.ts`. This route uses the `@google/generative-ai` SDK to communicate with the Gemini API.
+- The API takes a user's prompt, sends it to the `gemini-2.5-flash` model (or other configured model), and returns the generated response. The prompt to the Gemini API is designed to be strict, ensuring a clean, parsable list of job titles and descriptions.
+- The API key is managed through a `.env` file and exposed to the server-side of the Nuxt application via the `runtimeConfig` in `nuxt.config.ts`.
 
 # Animations
 
-The project uses the GSAP library for animations.
+The project uses the GSAP library for animations to enhance user experience.
 
-- **Hero Component (`components/Hero.vue`):** When the CTA button is clicked, the hero component (input and button) animates down and fades out. A loader is displayed within the Hero component while waiting for the API response.
-- **Cards Component (`components/Cards.vue`):** When the CTA button is clicked, the cards animate out of view with a stagger effect.
-- **Loader (`pages/index.vue`):** A prominent loader with text and a GSAP fade-in animation is displayed in the main page while the API call is in progress.
-
-Both the Hero and Cards animations are triggered simultaneously from the `pages/index.vue` component.
+- **Hero Component (`components/Hero.vue`):**
+    - When the CTA button is clicked, the hero component (input field, its label, and the button) animates downwards and fades out with a slight stagger effect.
+    - The parent container of the Hero component now has `overflow: hidden` to ensure the animation is clipped correctly.
+    - A `resetAnimation` function is available to restore the Hero component's initial state when a new search is initiated.
+- **Cards Component (`components/Cards.vue`):**
+    - When the CTA button is clicked, the cards animate out of view with a stagger effect (0.1 seconds delay).
+    - The cards container has `overflow: hidden` to clip the animation.
+- **Prompt Layout (`components/PromptLayout.vue`):**
+    - The `PromptLayout` component now displays a loader (spinner with "Loading..." text) when waiting for the Gemini API response.
+    - The user's input prompt text is hidden during the loading state and displayed once results are available.
+    - The prompt text is now centered.
+- **Overall Animation Flow:**
+    - Both the Hero and Cards animations are triggered simultaneously from the `pages/index.vue` component.
+    - The loading state (displaying `PromptLayout` with its loader) is activated only *after* the Hero and Cards animations have completed, ensuring a smooth transition and preventing animations from being obscured.
