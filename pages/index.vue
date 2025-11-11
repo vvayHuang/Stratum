@@ -8,24 +8,23 @@
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
-        <div class="container-centered w-full overflow-hidden">
+        <!-- Hero component, only shown when not loading and no ideas -->
+        <div v-if="!isLoading && ideas.length === 0" class="container-centered w-full overflow-hidden">
           <Hero
             ref="heroComponent"
             @show-money="handleShowMoney"
             :is-loading="isLoading"
           />
         </div>
-      </div>
 
-      <div
-        v-if="isLoading || ideas.length > 0"
-        ref="loaderContainer"
-        class="container-centered my-10"
-      >
-        <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" @reset="handleReset" />
-      </div>
-      <div v-if="error" class="container-centered mt-10">
-        <p class="text-red-500">{{ error }}</p>
+        <!-- PromptLayout component, only shown when loading or ideas are present -->
+        <div
+          v-if="isLoading || ideas.length > 0"
+          ref="loaderContainer"
+          class="my-10"
+        >
+          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" @reset="handleReset" />
+        </div>
       </div>
 
       <section class="mt-auto" v-show="!isLoading && ideas.length === 0">
