@@ -6,9 +6,9 @@
     <nav class="ml-auto flex gap-8 items-center">
       <button class="font-semibold text-xl">Home</button>
       <button class="font-semibold text-xl">FAQ</button>
-      <button class="font-semibold text-xl">Login</button>
     </nav>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+</script>

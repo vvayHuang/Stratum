@@ -1,68 +1,76 @@
-# Google Authentication Setup for Nuxt.js Application
+# Google OAuth 認證設定指南
 
-This document outlines the steps required to set up Google OAuth 2.0 in the Google Cloud Console and configure your Nuxt.js application for Google Authentication.
+本文件將引導您完成在 Google Cloud Console 中設定 OAuth 2.0，以便在您的應用程式中啟用 Google 登入功能。
 
-## 1. Google Cloud Console Setup
+## 步驟一：建立或選擇現有的 Google Cloud 專案
 
-1.  **Go to Google Cloud Console:**
-    Navigate to the [Google Cloud Console](https://console.cloud.google.com/).
+1.  前往 [Google Cloud Console](https://console.cloud.google.com/)。
+2.  如果您已經有一個專案，請在頁面頂端的專案下拉式選單中選取它。
+3.  如果沒有，請點擊「新增專案」，並依照指示建立一個新專案。
 
-2.  **Create a New Project (if you don't have one):**
-    *   Click on the project selector dropdown at the top.
-    *   Click "New Project".
-    *   Give your project a name (e.g., "SideBling App") and click "Create".
+## 步驟二：啟用 APIs & Services
 
-3.  **Enable the Google People API:**
-    *   In the search bar at the top, search for "Google People API".
-    *   Click on "Google People API" and then click "Enable". (This API is often required for retrieving user profile information after authentication).
+1.  在左側導覽面板中，選擇「**APIs & Services**」 > 「**Enabled APIs & services**」。
+2.  點擊頂端的「**+ ENABLE APIS AND SERVICES**」。
+3.  搜尋「**Google People API**」並啟用它。這是 `nuxt-auth` 獲取使用者基本資料所需的 API。
 
-4.  **Configure the OAuth Consent Screen:**
-    *   In the left-hand navigation menu, go to "APIs & Services" > "OAuth consent screen".
-    *   **User Type:** Select "External" and click "Create".
-    *   **App registration:**
-        *   **App name:** Enter a user-facing name for your application (e.g., "SideBling App").
-        *   **User support email:** Select your email address.
-        *   **Authorized domains:** Add your application's domain (e.g., `localhost` for development, and your production domain).
-        *   **Developer contact information:** Enter your email address.
-        *   Click "Save and Continue".
-    *   **Scopes:** For basic Google login, you'll typically need:
-        *   `.../auth/userinfo.email`
-        *   `.../auth/userinfo.profile`
-        *   Click "Add or Remove Scopes", select these, and click "Update".
-        *   Click "Save and Continue".
-    *   **Test users:** Add your Google account(s) as test users. This is crucial for testing your application before it's verified by Google.
-    *   Click "Save and Continue".
-    *   **Summary:** Review your settings and click "Back to Dashboard".
+## 步驟三：設定 OAuth 同意畫面 (OAuth consent screen)
 
-5.  **Create OAuth 2.0 Client ID Credentials:**
-    *   In the left-hand navigation menu, go to "APIs & Services" > "Credentials".
-    *   Click "+ CREATE CREDENTIALS" > "OAuth client ID".
-    *   **Application type:** Select "Web application".
-    *   **Name:** Give your OAuth client a name (e.g., "Nuxt Web Client").
-    *   **Authorized JavaScript origins:**
-        *   Add your application's URL(s). For local development, this is typically `http://localhost:3000`. For production, add your domain (e.g., `https://your-app.com`).
-    *   **Authorized redirect URIs:**
-        *   This is the URL where Google will redirect the user after authentication. For `NuxtAuth` (or similar libraries), this is usually `http://localhost:3000/api/auth/callback/google` for development and `https://your-app.com/api/auth/callback/google` for production.
-        *   Click "Create".
+在您建立憑證之前，您必須先設定同意畫面。
 
-6.  **Get your Client ID and Client Secret:**
-    *   After creating the credentials, a dialog will appear showing your **Client ID** and **Client Secret**.
-    *   **SAVE THESE VALUES SECURELY.** You will need them for your Nuxt.js application's environment variables.
+1.  在左側導覽面板中，選擇「**APIs & Services**」 > 「**OAuth consent screen**」。
+2.  選擇使用者類型：
+    *   **內部 (Internal)**：僅限您的 G Suite 組織內部的使用者。
+    *   **外部 (External)**：適用於任何擁有 Google 帳戶的使用者。如果您希望任何人都能登入，請選擇此項。
+3.  點擊「**建立 (Create)**」。
+4.  填寫必要的應用程式資訊：
+    *   **應用程式名稱 (App name)**：您的應用程式顯示給使用者的名稱。
+    *   **使用者支援電子郵件 (User support email)**：使用者尋求支援時可以聯繫的電子郵件。
+    *   **開發人員聯絡資訊 (Developer contact information)**：Google 用於通知您專案變更的電子郵件。
+5.  點擊「**儲存並繼續 (SAVE AND CONTINUE)**」。
+6.  在「**範圍 (Scopes)**」頁面，直接點擊「**儲存並繼續 (SAVE AND CONTINUE)**」，`nuxt-auth` 會自動處理所需的範圍。
+7.  在「**測試使用者 (Test users)**」頁面，如果您的應用程式處於「測試」模式，您需要新增允許登入的 Google 帳戶。開發期間，您可以新增自己的 Google 帳戶。
+8.  點擊「**儲存並繼續 (SAVE AND CONTINUE)**」。
+9.  檢視摘要頁面，然後點擊「**返回資訊主頁 (BACK TO DASHBOARD)**」。
 
-## 2. Nuxt.js Environment Variables
+## 步驟四：建立 OAuth 2.0 用戶端 ID 憑證
 
-You will need to define the following environment variables in your `.env` file (create one in your project root if it doesn't exist):
+1.  在左側導覽面板中，選擇「**APIs & Services**」 > 「**Credentials**」。
+2.  點擊頂端的「**+ CREATE CREDENTIALS**」，然後選擇「**OAuth client ID**」。
+3.  在「**應用程式類型 (Application type)**」下拉式選單中，選擇「**網頁應用程式 (Web application)**」。
+4.  為您的用戶端 ID 命名，例如「My Nuxt App Client」。
+5.  設定「**已授權的 JavaScript 來源 (Authorized JavaScript origins)**」：
+    *   點擊「**+ ADD URI**」。
+    *   輸入您應用程式的基礎 URL。在開發環境中，這通常是 `http://localhost:3000`。
+6.  設定「**已授權的重新導向 URI (Authorized redirect URIs)**」：
+    *   點擊「**+ ADD URI**」。
+    *   輸入您應用程式的回呼 URL (callback URL)。對於 `@sidebase/nuxt-auth`，預設的回呼路徑是 `/api/auth/callback/google`。
+    *   因此，在開發環境中，您應該輸入 `http://localhost:3000/api/auth/callback/google`。
+7.  點擊「**建立 (CREATE)**」。
 
+## 步驟五：取得您的用戶端 ID 和用戶端密鑰
+
+建立後，一個視窗會彈出，顯示您的「**用戶端 ID (Your Client ID)**」和「**用戶端密鑰 (Your Client Secret)**」。請務必妥善保管這些資訊。
+
+## 步驟六：設定環境變數
+
+在您的專案根目錄下，建立或開啟 `.env` 檔案，並加入以下變數：
+
+```env
+# Auth Secret (用於簽署 JWT 的隨機字串，長度至少 32 個字元)
+# 你可以使用 `openssl rand -base64 32` 來產生一個
+NUXT_AUTH_SECRET='請在此貼上您產生的密鑰'
+
+# Google OAuth 憑證
+NUXT_OAUTH_GOOGLE_CLIENT_ID='請在此貼上您的用戶端 ID'
+NUXT_OAUTH_GOOGLE_CLIENT_SECRET='請在此貼上您的用戶端密鑰'
+
+# 應用程式的基礎 URL
+AUTH_ORIGIN='http://localhost:3000'
 ```
-NUXT_PUBLIC_GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
-NUXT_PUBLIC_GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
-NUXT_PUBLIC_GOOGLE_REDIRECT_URI="http://localhost:3000/api/auth/callback/google"
-NUXT_SECRET="A_RANDOM_STRING_FOR_AUTH_SESSION_SECRET"
-```
 
-*   Replace `"YOUR_GOOGLE_CLIENT_ID"` with the Client ID you obtained from the Google Cloud Console.
-*   Replace `"YOUR_GOOGLE_CLIENT_SECRET"` with the Client Secret you obtained.
-*   Ensure `NUXT_PUBLIC_GOOGLE_REDIRECT_URI` matches the "Authorized redirect URIs" you configured in the Google Cloud Console. Update it for your production environment.
-*   `NUXT_SECRET` should be a long, random string (e.g., generated by `openssl rand -base64 32`). This is used by `NuxtAuth` for session encryption.
+**重要提示**：
+*   `NUXT_AUTH_SECRET` 是一個非常重要的安全密鑰。請確保它足夠複雜且不被洩漏。
+*   切勿將您的 `.env` 檔案提交到版本控制系統 (例如 Git) 中。
 
-**Important:** For production deployments, ensure these environment variables are securely configured in your hosting environment (e.g., Vercel, Netlify, etc.). Do not commit your `.env` file to version control in production.
+完成以上步驟後，您的應用程式就應該能夠成功使用 Google 帳戶進行認證了。

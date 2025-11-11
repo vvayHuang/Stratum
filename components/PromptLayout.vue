@@ -1,8 +1,11 @@
 <template>
   <div class="text-white w-[1152px] px-6 mx-auto">
     <div class="flex justify-center items-center mb-16 min-h-[60px]">
-      <p v-if="!isLoading" class="text-center text-3xl font-semibold">
+      <p v-if="!isLoading && !props.error" class="text-center text-3xl font-semibold">
         “{{ prompt }}”
+      </p>
+      <p v-if="props.error" class="text-center text-xl text-red-500 font-semibold">
+        Error: {{ props.error }}
       </p>
     </div>
 
@@ -178,6 +181,10 @@ const props = defineProps({
   isLoading: {
     type: Boolean,
     default: false,
+  },
+  error: {
+    type: String,
+    default: null,
   },
 });
 

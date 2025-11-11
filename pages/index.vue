@@ -19,11 +19,11 @@
 
         <!-- PromptLayout component, only shown when loading or ideas are present -->
         <div
-          v-if="isLoading || ideas.length > 0"
+          v-if="isLoading || ideas.length > 0 || error"
           ref="loaderContainer"
           class="my-10"
         >
-          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" @reset="handleReset" />
+          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" />
         </div>
       </div>
 
