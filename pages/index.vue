@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-[#009358] text-white flex flex-col">
     <header class="py-6">
       <div class="container-centered flex items-center justify-between">
-        <Navbar :is-logged-in="isLoggedIn" @open-login-modal="loginModal.openModal()" />
+        <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
 
@@ -37,6 +37,7 @@
 </template>
 
 <script setup>
+definePageMeta({ auth: false });
 import { ref, watch, computed, nextTick } from "vue";
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
@@ -51,7 +52,6 @@ const heroComponent = ref(null);
 const loaderContainer = ref(null);
 const isLoading = ref(false);
 const prompt = ref("");
-const isLoggedIn = ref(false); // Placeholder for login state
 const loginModal = ref(null); // Ref for LoginModal
 
 watch(isLoading, (newValue) => {

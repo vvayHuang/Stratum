@@ -9,11 +9,13 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    authSecret: process.env.NUXT_AUTH_SECRET,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
     geminiApiKey: process.env.GEMINI_API_KEY
   },
   auth: {
-    isEnabled: false,
-    baseURL: process.env.AUTH_ORIGIN,
+    globalAppMiddleware: true,
     provider: {
       type: 'authjs'
     }
