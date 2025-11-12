@@ -1,58 +1,54 @@
 <template>
-  <div
-    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center"
-    @click.self="$emit('close')"
-  >
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm">
-      <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
-      <button
-        @click="handleSignIn"
-        class="w-full flex items-center justify-center gap-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
-      >
-        <svg
-          class="w-6 h-6"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 48 48"
-        >
-          <path
-            fill="#FFC107"
-            d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-          ></path>
-          <path
-            fill="#FF3D00"
-            d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-          ></path>
-          <path
-            fill="#4CAF50"
-            d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.223,0-9.651-3.657-11.303-8H6.306C9.656,39.663,16.318,44,24,44z"
-          ></path>
-          <path
-            fill="#1976D2"
-            d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C42.021,35.591,44,30.138,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-          ></path>
-        </svg>
-        Sign in with Google
-      </button>
-      <button
-        @click="$emit('close')"
-        class="w-full mt-4 text-center text-gray-500 hover:text-gray-700"
-      >
-        Cancel
-      </button>
+  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-8 rounded-lg shadow-xl relative w-full max-w-md mx-auto">
+      <button @click="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+      <h2 class="text-3xl font-extrabold mb-2 text-center text-gray-800 py-4">Welcome</h2>
+      <p class="text-gray-600 text-center mb-8">Sign in with your Google account to continue</p>
+      <div class="flex justify-center">
+        <button @click="signInWithGoogle" class="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center space-x-3">
+          <img src="~/assets/google-g-logo.svg" alt="Google logo" class="w-6 h-6">
+          <span>Sign in with Google</span>
+        </button>
+      </div>
+      <p class="text-gray-500 text-xs text-center mt-6">
+        By clicking 'Sign in with Google', you agree to our
+        <a href="#" class="text-blue-600 hover:underline font-medium">Terms of Service</a> and
+        <a href="#" class="text-blue-600 hover:underline font-medium">Privacy Policy</a>.
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-const { signIn } = useAuth()
+import { ref } from 'vue';
 
-const emit = defineEmits(['close'])
+const isOpen = ref(false);
 
-const handleSignIn = async () => {
-  const error = await signIn('google', { callbackUrl: '/' })
-  if (error) {
-    console.error(error)
-  }
-  emit('close')
-}
+const openModal = () => {
+  isOpen.value = true;
+};
+
+const closeModal = () => {
+  isOpen.value = false;
+};
+
+const signInWithGoogle = () => {
+  console.log('Placeholder for Google Sign-In');
+  // In a real scenario, this would initiate the Google Auth flow
+  // For now, we'll just close the modal after a simulated delay
+  setTimeout(() => {
+    closeModal();
+    // Optionally, emit an event to indicate successful login (for placeholder purposes)
+    // emit('login-success');
+  }, 1000);
+};
+
+defineExpose({
+  openModal,
+  closeModal,
+});
 </script>
+
+<style scoped>
+/* You can add more styling here if needed */
+</style>

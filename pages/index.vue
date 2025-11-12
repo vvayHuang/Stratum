@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-[#009358] text-white flex flex-col">
     <header class="py-6">
       <div class="container-centered flex items-center justify-between">
-        <Navbar />
+        <Navbar :is-logged-in="isLoggedIn" @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
 
@@ -31,6 +31,8 @@
         <Cards ref="cardsComponent" />
       </section>
     </main>
+
+    <LoginModal ref="loginModal" />
   </div>
 </template>
 
@@ -41,6 +43,7 @@ import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import Cards from "~/components/Cards.vue";
 import PromptLayout from "~/components/PromptLayout.vue";
+import LoginModal from "~/components/LoginModal.vue"; // Import LoginModal
 
 const geminiResponse = ref("");
 const cardsComponent = ref(null);
@@ -48,6 +51,8 @@ const heroComponent = ref(null);
 const loaderContainer = ref(null);
 const isLoading = ref(false);
 const prompt = ref("");
+const isLoggedIn = ref(false); // Placeholder for login state
+const loginModal = ref(null); // Ref for LoginModal
 
 watch(isLoading, (newValue) => {
   if (newValue) {
