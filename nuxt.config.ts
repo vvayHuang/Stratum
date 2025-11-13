@@ -1,23 +1,30 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', '@sidebase/nuxt-auth'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase'],
   css: ['~/assets/css/tailwind.css'],
   app: {
     head: {
       title: 'Figma Export - SideBling'
     }
   },
-  runtimeConfig: {
-    authSecret: process.env.NUXT_AUTH_SECRET,
-    googleClientId: process.env.GOOGLE_CLIENT_ID,
-    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    geminiApiKey: process.env.GEMINI_API_KEY
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
   },
-  auth: {
-    globalAppMiddleware: true,
-    provider: {
-      type: 'authjs'
-    }
+  nitro: {
+    compatibilityDate: '2025-11-13'
+  },
+  runtimeConfig: {
+    geminiApiKey: process.env.GEMINI_API_KEY,
+    supabaseUrl: process.env.SUPABASE_URL, // Expose URL here for server-side access
+    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
+  },
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    redirect: false
   }
 })

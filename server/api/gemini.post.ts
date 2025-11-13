@@ -1,9 +1,24 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { serverSupabaseUser } from '#supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
 export default defineEventHandler(async (event) => {
   const { prompt } = await readBody(event);
   const runtimeConfig = useRuntimeConfig();
   const apiKey = runtimeConfig.geminiApiKey;
+
+  const user = await serverSupabaseUser(event);
+
+  if (!user) {
+    event.node.res.statusCode = 401;
+    return { error: 'Unauthorized: User must be logged in.' };
+  }
+
+  // Create an admin client to bypass RLS
+  const supabaseAdmin = createClient(
+    runtimeConfig.supabaseUrl, // Corrected access to Supabase URL
+    runtimeConfig.supabaseServiceKey
+  );
 
   if (!prompt) {
     event.node.res.statusCode = 400;
@@ -24,6 +39,18 @@ export default defineEventHandler(async (event) => {
     const result = await model.generateContent(fullPrompt);
     const response = await result.response;
     const text = response.text();
+
+    // Save the interaction to Supabase using the admin client
+    const { error: insertError } = await supabaseAdmin.from('user_interactions').insert({
+      user_id: user.sub, // Corrected: Use user.sub instead of user.id
+      prompt: prompt,
+      response: { text: text } // Store as a JSON object
+    });
+
+    if (insertError) {
+      console.error('Error saving to Supabase:', insertError.message);
+      // Don't block the user, just log the error
+    }
     
     return { text };
 

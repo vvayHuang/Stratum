@@ -38,7 +38,8 @@
 
 <script setup>
 definePageMeta({ auth: false });
-import { ref, watch, computed, nextTick } from "vue";
+import { ref, watch, computed, nextTick, watchEffect } from "vue";
+import { useSupabaseUser } from '#imports';
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
@@ -46,6 +47,7 @@ import Cards from "~/components/Cards.vue";
 import PromptLayout from "~/components/PromptLayout.vue";
 import LoginModal from "~/components/LoginModal.vue"; // Import LoginModal
 
+const user = useSupabaseUser();
 const geminiResponse = ref("");
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
@@ -53,6 +55,12 @@ const loaderContainer = ref(null);
 const isLoading = ref(false);
 const prompt = ref("");
 const loginModal = ref(null); // Ref for LoginModal
+
+watchEffect(() => {
+  if (user.value && loginModal.value) {
+    loginModal.value.closeModal();
+  }
+});
 
 watch(isLoading, (newValue) => {
   if (newValue) {

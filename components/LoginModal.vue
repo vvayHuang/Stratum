@@ -5,7 +5,7 @@
       <h2 class="text-4xl font-bold mb-2 text-gray-800">Welcome to SideBling</h2>
       <p class="mb-6 text-gray-600">Sign in to get personalized career advice and unlock full features.</p>
       <button
-        @click="signIn('google')"
+        @click="signInWithGoogle"
         class="bg-white border border-gray-300 text-gray-800 font-bold py-3 px-6 rounded-full flex items-center justify-center w-full mb-4"
       >
         <img src="/assets/google-g-logo.svg" alt="Google logo" class="w-5 h-5 mr-2" />
@@ -18,10 +18,19 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuth } from '#imports';
+import { useSupabaseClient } from '#imports';
 
-const { signIn } = useAuth();
+const supabase = useSupabaseClient();
 const isOpen = ref(false);
+
+const signInWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+  });
+  if (error) {
+    console.error('Error signing in with Google:', error.message);
+  }
+};
 
 const openModal = () => {
   isOpen.value = true;

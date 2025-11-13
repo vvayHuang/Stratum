@@ -8,16 +8,16 @@
       <button class="font-semibold text-xl">FAQ</button>
       
       <!-- Authenticated State -->
-      <div v-if="status === 'authenticated'" class="relative">
+      <div v-if="user" class="relative">
         <button @click="isDropdownOpen = !isDropdownOpen" class="flex items-center gap-2">
-          <img :src="session.user.image" alt="User Avatar" class="h-8 w-8 rounded-full" />
-          <span class="font-semibold">{{ session.user.name }}</span>
+          <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="h-8 w-8 rounded-full" />
+          <span class="font-semibold">{{ user.user_metadata.full_name }}</span>
         </button>
         
         <!-- Dropdown Menu -->
         <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
           <button 
-            @click="() => { signOut(); isDropdownOpen = false; }" 
+            @click="handleSignOut" 
             class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
             Sign out
@@ -33,9 +33,15 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useAuth } from '#imports';
+import { useSupabaseUser, useSupabaseClient } from '#imports';
 
-const { status, data: session, signOut } = useAuth();
+const user = useSupabaseUser();
+const supabase = useSupabaseClient();
 const emit = defineEmits(['open-login-modal']);
 const isDropdownOpen = ref(false);
+
+const handleSignOut = async () => {
+  await supabase.auth.signOut();
+  isDropdownOpen.value = false;
+};
 </script>
