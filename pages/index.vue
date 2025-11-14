@@ -9,7 +9,7 @@
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div v-if="!isLoading && ideas.length === 0" class="container-centered w-full overflow-hidden">
+        <div v-if="!isLoading && ideas.length === 0 && !error" class="container-centered w-full overflow-hidden">
           <Hero
             ref="heroComponent"
             @show-money="handleShowMoney"
@@ -78,15 +78,17 @@ watch(isLoading, (newValue) => {
 const error = ref(null);
 
 const ideas = computed(() => {
-  if (!geminiResponse.value) return [];
-
-  const regex = /\d+\.\s*\*\*(.*?)\*\*:\s*([\s\S]*?)(?=\d+\.\s*\*\*|$)/g;
-  let match;
-  const allIdeas = [];
-  while ((match = regex.exec(geminiResponse.value)) !== null) {
-    allIdeas.push({ title: match[1].trim(), description: match[2].trim() });
+  if (!geminiResponse.value) {
+    return [];
   }
-  return allIdeas;
+  try {
+    // The response is now a JSON string from the API, so we parse it.
+    const parsed = JSON.parse(geminiResponse.value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.error("Failed to parse Gemini response:", e);
+    return [];
+  }
 });
 
 const handleShowMoney = async (p) => {

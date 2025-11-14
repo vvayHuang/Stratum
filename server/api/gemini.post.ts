@@ -1,66 +1,111 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { serverSupabaseUser } from '#supabase/server';
 import { createClient } from '@supabase/supabase-js';
 
 export default defineEventHandler(async (event) => {
-  const { prompt } = await readBody(event);
-  const runtimeConfig = useRuntimeConfig();
-  const apiKey = runtimeConfig.geminiApiKey;
-
   const user = await serverSupabaseUser(event);
-
-  if (!user) {
-    event.node.res.statusCode = 401;
-    return { error: 'Unauthorized: User must be logged in.' };
-  }
+  const config = useRuntimeConfig();
 
   // Create an admin client to bypass RLS
-  const supabaseAdmin = createClient(
-    runtimeConfig.supabaseUrl, // Corrected access to Supabase URL
-    runtimeConfig.supabaseServiceKey
-  );
+  const adminSupabase = createClient(config.supabaseUrl, config.supabaseSecretKey);
 
-  if (!prompt) {
-    event.node.res.statusCode = 400;
-    return { error: 'Prompt is required' };
+  if (!user) {
+    return {
+      statusCode: 401,
+      body: 'Unauthorized',
+    };
   }
 
-  if (!apiKey) {
-    event.node.res.statusCode = 500;
-    return { error: 'Gemini API key is not configured on the server.' };
-  }
+  const { prompt } = await readBody(event);
+  const genAI = new GoogleGenerativeAI(config.geminiApiKey);
+
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+  const chat = model.startChat({
+    history: [
+      {
+        role: 'user',
+        parts: [{ text: 'You are a career advice expert. Your goal is to give the user 3 ideas on how they can progress in their career based on their interests. The user will provide you with their interests. You must provide 3 ideas in a JSON array format. Each object in the array should have a "title" and a "description". Do not include any other text or formatting in your response, just the JSON array.' }],
+      },
+      {
+        role: 'model',
+        parts: [{ text: '[{"title": "Idea 1 Title", "description": "Idea 1 Description."}, {"title": "Idea 2 Title", "description": "Idea 2 Description."}, {"title": "Idea 3 Title", "description": "Idea 3 Description."}]' }],
+      },
+    ],
+    generationConfig: {
+      maxOutputTokens: 8192,
+    },
+  });
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-    const fullPrompt = `You are a career advisor. Your response MUST be only a numbered list of 8 to 12 potential job titles with a brief description for each, based on the user's interest. Do NOT include any introductory or concluding sentences. The format for each item must be exactly: a number, a period, a space, the job title in double asterisks, a colon, a space, and then the description. User's interest: "${prompt}"`;
-
-    const result = await model.generateContent(fullPrompt);
+    const result = await chat.sendMessage(prompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
 
-    // Save the interaction to Supabase using the admin client
-    const { error: insertError } = await supabaseAdmin.from('user_interactions').insert({
-      user_id: user.sub, // Corrected: Use user.sub instead of user.id
-      prompt: prompt,
-      response: { text: text } // Store as a JSON object
-    });
-
-    if (insertError) {
-      console.error('Error saving to Supabase:', insertError.message);
-      // Don't block the user, just log the error
+    // Clean the response to ensure it's valid JSON
+    if (text.startsWith('```json')) {
+      text = text.substring(7, text.length - 3).trim();
+    } else if (text.startsWith('```')) {
+      text = text.substring(3, text.length - 3).trim();
     }
-    
-    return { text };
 
+    // The response from Gemini should be a JSON string of ideas
+    const ideas = JSON.parse(text);
+
+    // Save the prompt to the 'prompts' table
+    const { data: promptData, error: promptError } = await adminSupabase
+      .from('prompts')
+      .insert({
+        user_id: user.sub,
+        prompt,
+        response: text, // Save the raw response as well
+      })
+      .select('id')
+      .single();
+
+    if (promptError) {
+      console.error('Supabase prompt insert error:', promptError);
+      throw new Error('Failed to save prompt.');
+    }
+
+    const promptId = promptData.id;
+
+    // Prepare ideas for insertion
+    const ideasToInsert = ideas.map(idea => ({
+      prompt_id: promptId,
+      title: idea.title,
+      description: idea.description,
+    }));
+
+    // Save the ideas to the 'ideas' table
+    const { error: ideasError } = await adminSupabase
+      .from('ideas')
+      .insert(ideasToInsert);
+
+    if (ideasError) {
+      console.error('Supabase ideas insert error:', ideasError);
+      // Here I might need to decide on a rollback strategy, but for now, just log it.
+      throw new Error('Failed to save ideas.');
+    }
+
+    return {
+      text, // The frontend still expects the text response to display it.
+    };
   } catch (error) {
-    event.node.res.statusCode = 500;
-    let errorMessage = 'Failed to fetch response from Gemini due to a server error.';
-    if (error instanceof Error) {
-        errorMessage = error.message;
+    console.error('Error processing request:', error);
+
+    // Check if the error is a 503 overload error
+    if (error.message && error.message.includes('503')) {
+      event.node.res.statusCode = 503;
+      return {
+        error: 'The model is currently overloaded. Please try again later.',
+      };
     }
-    console.error('Error from Gemini API:', error);
-    return { error: errorMessage };
+
+    // For other errors
+    event.node.res.statusCode = 500;
+    return {
+      error: 'Failed to fetch from Gemini API or save data.',
+    };
   }
 });

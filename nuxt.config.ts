@@ -15,12 +15,12 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    compatibilityDate: '2025-11-13'
+    compatibilityDate: '2025-11-14'
   },
   runtimeConfig: {
     geminiApiKey: process.env.GEMINI_API_KEY,
     supabaseUrl: process.env.SUPABASE_URL, // Expose URL here for server-side access
-    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
+    supabaseSecretKey: process.env.SUPABASE_SECRET_KEY,
   },
   supabase: {
     url: process.env.SUPABASE_URL,
