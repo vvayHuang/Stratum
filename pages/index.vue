@@ -23,11 +23,11 @@
           ref="loaderContainer"
           class="my-10"
         >
-          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" />
+          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
         </div>
       </div>
 
-      <section class="mt-auto" v-show="!isLoading && ideas.length === 0">
+      <section class="mt-auto" v-show="!isLoading && ideas.length === 0 && !isOverloadError">
         <Cards ref="cardsComponent" />
       </section>
     </main>
@@ -48,7 +48,7 @@ import PromptLayout from "~/components/PromptLayout.vue";
 import LoginModal from "~/components/LoginModal.vue"; // Import LoginModal
 
 const user = useSupabaseUser();
-const geminiResponse = ref("");
+const ideas = ref([]);
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
 const loaderContainer = ref(null);
@@ -77,25 +77,15 @@ watch(isLoading, (newValue) => {
 });
 const error = ref(null);
 
-const ideas = computed(() => {
-  if (!geminiResponse.value) {
-    return [];
-  }
-  try {
-    // The response is now a JSON string from the API, so we parse it.
-    const parsed = JSON.parse(geminiResponse.value);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    console.error("Failed to parse Gemini response:", e);
-    return [];
-  }
+const isOverloadError = computed(() => {
+  return error.value && error.value.includes('The model is currently overloaded');
 });
 
 const handleShowMoney = async (p) => {
   console.log("handleShowMoney called!");
   prompt.value = p;
   error.value = null;
-  geminiResponse.value = "";
+  ideas.value = [];
 
   const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
   const cardsAnim = cardsComponent.value ? cardsComponent.value.playAnimation() : null;
@@ -123,7 +113,7 @@ const handleShowMoney = async (p) => {
     }
 
     const data = await res.json();
-    geminiResponse.value = data.text;
+    ideas.value = data.ideas;
 
   } catch (e) {
     console.error("Error in handleShowMoney:", e);
@@ -133,8 +123,15 @@ const handleShowMoney = async (p) => {
   }
 };
 
+const handleUpdateIdea = (updatedIdea) => {
+  const index = ideas.value.findIndex(idea => idea.id === updatedIdea.id);
+  if (index !== -1) {
+    ideas.value[index] = updatedIdea;
+  }
+};
+
 const handleReset = () => {
-  geminiResponse.value = "";
+  ideas.value = [];
   prompt.value = "";
   if (heroComponent.value) {
     heroComponent.value.resetAnimation();

@@ -1,22 +1,22 @@
-# Figma → Nuxt + Tailwind sample
+# Figma → Nuxt + Tailwind 範例
 
-This is a small scaffold generated from the Figma design you provided. It contains a minimal Nuxt 3 project with Tailwind CSS and three components (Navbar, Hero, Cards) plus the exported SVG assets.
+這是一個從您提供的 Figma 設計生成的輕量級骨架專案。它包含一個最小化的 Nuxt 3 專案，使用 Tailwind CSS，並包含三個元件（Navbar、Hero、Cards）以及匯出的 SVG 資源。
 
-Quick start
+快速開始
 
-1. cd to the project folder:
+1. 進入專案資料夾：
 
 ```bash
 cd /Users/huangjunwei/Desktop/mcp/figma-export
 ```
 
-2. Install dependencies and run dev server:
+2. 安裝依賴並運行開發伺服器：
 
 ```bash
 npm install
 npm run dev
 ```
 
-Notes
-- Assets (logo and icon) were exported from the Figma nodes into `/assets`.
-- This is a small sample to get you started; styles are approximate and based on the Figma structure. If you want full parity (responsive variants, fonts, exact spacing), I can iterate further.
+注意事項
+- 資源（標誌和圖示）已從 Figma 節點匯出到 `/assets`。
+- 這是一個小範例，旨在幫助您入門；樣式是近似的，並基於 Figma 結構。如果您需要完全一致（響應式變體、字體、精確間距），我可以進一步迭代。
