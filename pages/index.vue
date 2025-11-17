@@ -28,7 +28,7 @@
       </div>
 
       <section class="mt-auto" v-show="!isLoading && ideas.length === 0 && !isOverloadError">
-        <Cards ref="cardsComponent" />
+        <Cards ref="cardsComponent" :prompts="recentPrompts" @prompt-click="handleShowMoney" />
       </section>
     </main>
 
@@ -38,8 +38,8 @@
 
 <script setup>
 definePageMeta({ auth: false });
-import { ref, watch, computed, nextTick, watchEffect } from "vue";
-import { useSupabaseUser } from '#imports';
+import { ref, watch, computed, nextTick, watchEffect, onMounted } from "vue";
+import { useSupabaseUser, useSupabaseClient } from '#imports';
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
@@ -48,13 +48,29 @@ import PromptLayout from "~/components/PromptLayout.vue";
 import LoginModal from "~/components/LoginModal.vue"; // Import LoginModal
 
 const user = useSupabaseUser();
+const supabase = useSupabaseClient();
 const ideas = ref([]);
+const recentPrompts = ref([]);
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
 const loaderContainer = ref(null);
 const isLoading = ref(false);
 const prompt = ref("");
 const loginModal = ref(null); // Ref for LoginModal
+
+onMounted(async () => {
+  const { data, error } = await supabase
+    .from('prompts')
+    .select('prompt')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error('Error fetching recent prompts:', error);
+  } else {
+    recentPrompts.value = data;
+  }
+});
 
 watchEffect(() => {
   if (user.value && loginModal.value) {
@@ -88,7 +104,7 @@ const handleShowMoney = async (p) => {
   ideas.value = [];
 
   const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
-  const cardsAnim = cardsComponent.value ? cardsComponent.value.playAnimation() : null;
+  const cardsAnim = cardsComponent.value ? cardsComponent.value.playCardsAnimation() : null;
 
   await Promise.all([
     heroAnim ? heroAnim : Promise.resolve(),
@@ -113,6 +129,9 @@ const handleShowMoney = async (p) => {
     }
 
     const data = await res.json();
+    if (data.error) {
+      throw new Error(data.error);
+    }
     ideas.value = data.ideas;
 
   } catch (e) {
@@ -133,6 +152,7 @@ const handleUpdateIdea = (updatedIdea) => {
 const handleReset = () => {
   ideas.value = [];
   prompt.value = "";
+  error.value = null; // Also reset error on reset
   if (heroComponent.value) {
     heroComponent.value.resetAnimation();
   }

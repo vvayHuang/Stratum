@@ -5,7 +5,11 @@ module.exports = {
     "./app.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'background-hover-variable': '#00BB70',
+      },
+    },
   },
   plugins: [],
 };
