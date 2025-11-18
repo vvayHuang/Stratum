@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#009358] text-white flex flex-col">
     <header class="py-6">
-      <div class="container-centered flex items-center justify-between">
+      <div class="mx-auto max-w-6xl px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
@@ -9,26 +9,15 @@
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div v-if="!isLoading && ideas.length === 0 && !error" class="container-centered w-full overflow-hidden">
+        <div class="mx-auto max-w-6xl px-6 w-full overflow-hidden">
           <Hero
             ref="heroComponent"
             @show-money="handleShowMoney"
-            :is-loading="isLoading"
           />
         </div>
-
-        <!-- PromptLayout component, only shown when loading or ideas are present -->
-        <div
-          v-if="isLoading || ideas.length > 0 || error"
-          ref="loaderContainer"
-          class="my-10"
-        >
-          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
-        </div>
       </div>
-
-      <section class="mt-auto" v-show="!isLoading && ideas.length === 0 && !isOverloadError">
-        <Cards ref="cardsComponent" :prompts="recentPrompts" @prompt-click="handleShowMoney" />
+      <section class="mt-auto">
+        <Cards ref="cardsComponent" :prompts="recentPrompts" @prompt-click="(promptText, promptId) => navigateTo(`/prompts/${promptId}`)" />
       </section>
     </main>
 
@@ -38,30 +27,27 @@
 
 <script setup>
 definePageMeta({ auth: false });
-import { ref, watch, computed, nextTick, watchEffect, onMounted } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
+import { navigateTo } from '#app';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import Cards from "~/components/Cards.vue";
-import PromptLayout from "~/components/PromptLayout.vue";
+
 import LoginModal from "~/components/LoginModal.vue"; // Import LoginModal
 
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
-const ideas = ref([]);
 const recentPrompts = ref([]);
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
-const loaderContainer = ref(null);
-const isLoading = ref(false);
-const prompt = ref("");
 const loginModal = ref(null); // Ref for LoginModal
 
 onMounted(async () => {
   const { data, error } = await supabase
     .from('prompts')
-    .select('prompt')
+    .select('id, prompt') // Select both id and prompt
     .order('created_at', { ascending: false })
     .limit(10);
 
@@ -78,30 +64,8 @@ watchEffect(() => {
   }
 });
 
-watch(isLoading, (newValue) => {
-  if (newValue) {
-    nextTick(() => {
-      if (loaderContainer.value) {
-        gsap.fromTo(
-          loaderContainer.value,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.5 }
-        );
-      }
-    });
-  }
-});
-const error = ref(null);
-
-const isOverloadError = computed(() => {
-  return error.value && error.value.includes('The model is currently overloaded');
-});
-
 const handleShowMoney = async (p) => {
   console.log("handleShowMoney called!");
-  prompt.value = p;
-  error.value = null;
-  ideas.value = [];
 
   const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
   const cardsAnim = cardsComponent.value ? cardsComponent.value.playCardsAnimation() : null;
@@ -111,15 +75,15 @@ const handleShowMoney = async (p) => {
     cardsAnim ? cardsAnim : Promise.resolve(),
   ]);
 
-  isLoading.value = true;
-
   try {
+    let apiBody = { prompt: p };
+
     const res = await fetch("/api/gemini", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt: p }),
+      body: JSON.stringify(apiBody),
     });
 
     if (!res.ok) {
@@ -132,29 +96,17 @@ const handleShowMoney = async (p) => {
     if (data.error) {
       throw new Error(data.error);
     }
-    ideas.value = data.ideas;
+    const newPromptId = data.promptId; // Assuming promptId is returned from API
+
+    if (newPromptId) {
+      navigateTo(`/prompts/${newPromptId}`);
+    }
 
   } catch (e) {
     console.error("Error in handleShowMoney:", e);
-    error.value = e.message;
   } finally {
-    isLoading.value = false;
   }
 };
 
-const handleUpdateIdea = (updatedIdea) => {
-  const index = ideas.value.findIndex(idea => idea.id === updatedIdea.id);
-  if (index !== -1) {
-    ideas.value[index] = updatedIdea;
-  }
-};
 
-const handleReset = () => {
-  ideas.value = [];
-  prompt.value = "";
-  error.value = null; // Also reset error on reset
-  if (heroComponent.value) {
-    heroComponent.value.resetAnimation();
-  }
-};
 </script>

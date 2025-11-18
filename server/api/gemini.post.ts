@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const { prompt, generateGuide, idea } = await readBody(event);
+  const { prompt, generateGuide, idea, fetchIdeasByPrompt } = await readBody(event);
   const genAI = new GoogleGenerativeAI(config.geminiApiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
@@ -96,6 +96,48 @@ export default defineEventHandler(async (event) => {
         error: 'Failed to fetch from Gemini API or save data.',
       };
     }
+  } else if (fetchIdeasByPrompt) {
+    // Logic for fetching existing ideas by prompt
+    try {
+      // Find the prompt_id
+      const { data: promptDataArray, error: promptError } = await adminSupabase
+        .from('prompts')
+        .select('id')
+        .eq('prompt', prompt)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (promptError || !promptDataArray || promptDataArray.length === 0) {
+        console.error('Supabase prompt fetch error or not found:', promptError);
+        event.node.res.statusCode = 404;
+        return {
+          error: 'Prompt not found or no ideas associated with it.',
+        };
+      }
+
+      const promptId = promptDataArray[0].id;
+
+      // Fetch ideas associated with the prompt_id
+      const { data: ideas, error: ideasError } = await adminSupabase
+        .from('ideas')
+        .select('*')
+        .eq('prompt_id', promptId);
+
+      if (ideasError) {
+        console.error('Supabase ideas fetch error:', ideasError);
+        throw new Error('Failed to fetch ideas.');
+      }
+
+      return {
+        ideas: ideas,
+      };
+    } catch (error) {
+      console.error('Error fetching ideas by prompt:', error);
+      event.node.res.statusCode = 500;
+      return {
+        error: 'Failed to fetch existing ideas.',
+      };
+    }
   } else {
     // Existing logic for generating ideas
     const chat = model.startChat({
@@ -163,6 +205,7 @@ export default defineEventHandler(async (event) => {
 
       return {
         ideas: insertedIdeas,
+        promptId: promptId,
       };
     } catch (error) {
       console.error('Error processing request:', error);

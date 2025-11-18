@@ -27,7 +27,7 @@
     </div>
 
     <!-- Main content area with consistent height -->
-    <div v-if="!props.error" class="min-h-[796px] flex flex-col justify-center items-center">
+    <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-6xl px-6">
       <div
         v-if="isLoading && ideas.length === 0"
         class="flex flex-col items-center justify-center"

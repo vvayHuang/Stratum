@@ -5,7 +5,7 @@
       <div
         v-for="(prompt, index) in [...prompts, ...prompts]"
         :key="index"
-        @click="handleCardClick(prompt.prompt)"
+        @click="handleCardClick(prompt)"
         class="w-[320px] h-[200px] shrink-0 bg-transparent p-6 rounded-lg border border-[#00D37E] hover:bg-background-hover-variable transition-colors cursor-pointer flex flex-col justify-between"
       >
         <h3 class="text-white font-semibold text-xl">
@@ -69,8 +69,8 @@ const setupMarquee = () => {
   });
 };
 
-const handleCardClick = (promptText) => {
-  emit('prompt-click', promptText);
+const handleCardClick = (promptObj) => {
+  emit('prompt-click', promptObj.prompt, promptObj.id);
 };
 
 const playCardsAnimation = () => {

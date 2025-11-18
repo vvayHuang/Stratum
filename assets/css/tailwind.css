@@ -2,7 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom small helpers for the sample */
-.container-centered {
-  @apply mx-auto max-w-6xl px-6;
-}
+
