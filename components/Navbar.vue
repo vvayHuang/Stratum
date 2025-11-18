@@ -1,11 +1,12 @@
 <template>
   <div class="flex items-center w-full">
-    <a href="#"
+    <NuxtLink to="/"
       ><img src="/assets/logo.svg" alt="logo" class="h-12 w-auto"
-    /></a>
+    /></NuxtLink>
     <nav class="ml-auto flex gap-8 items-center">
-      <button class="font-semibold text-xl">Home</button>
+      <NuxtLink to="/" class="font-semibold text-xl">Home</NuxtLink>
       <button class="font-semibold text-xl">FAQ</button>
+      <NuxtLink v-if="user" to="/my-ideas" class="font-semibold text-xl">My Ideas</NuxtLink>
       
       <!-- Authenticated State -->
       <div v-if="user" class="relative">
