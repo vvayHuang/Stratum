@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#009358] text-white flex flex-col">
     <header class="py-6">
-      <div class="mx-auto max-w-6xl px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>

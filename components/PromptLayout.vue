@@ -368,8 +368,8 @@ watch(
 
 // Initial animation when component is mounted and an idea is already present
 onMounted(() => {
-  if (currentIdea.value) {
-    // animateCardIn('next'); // This will be handled by the watch
+  if (currentIdea.value && !currentIdea.value.report && marqueeContainer.value) {
+    startMarqueeAnimation();
   }
 });
 </script>

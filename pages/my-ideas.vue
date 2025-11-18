@@ -1,27 +1,39 @@
 <template>
   <div class="min-h-screen bg-[#009358] text-white flex flex-col">
     <header class="py-6">
-      <div class="mx-auto max-w-6xl px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
         <Navbar />
       </div>
     </header>
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
-      <div class="mx-auto max-w-6xl px-6 w-full py-10">
-        <h1 class="text-4xl font-bold mb-8">My Ideas</h1>
+      <div class="mx-auto max-w-7xl px-6 w-full py-10">
+        <div class="text-center mb-10">
+          <h1 class="text-5xl font-bold mb-2">My Ideas</h1>
+          <p class="text-lg text-gray-300">Explore all the brilliant career ideas you've generated!</p>
+        </div>
 
         <div v-if="isLoading" class="text-center text-xl">Loading your ideas...</div>
         <div v-else-if="error" class="text-center text-xl text-red-400">Error: {{ error }}</div>
         <div v-else-if="userPrompts.length === 0" class="text-center text-xl">You haven't generated any ideas yet.</div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div v-else ref="cardContainerRef" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <NuxtLink
             v-for="prompt in userPrompts"
             :key="prompt.id"
             :to="`/prompts/${prompt.id}`"
-            class="block bg-transparent p-6 rounded-lg border border-[#00D37E] hover:bg-background-hover-variable transition-colors cursor-pointer"
+            class="block bg-transparent p-6 rounded-lg border border-[#00D37E] hover:bg-background-hover-variable transition-colors cursor-pointer flex flex-col justify-between"
           >
-            <h3 class="text-white font-semibold text-xl mb-4">"{{ prompt.prompt }}"</h3>
-            <p class="text-sm opacity-80">Generated on: {{ new Date(prompt.created_at).toLocaleDateString() }}</p>
+            <div>
+              <h3 class="text-white font-semibold text-xl mb-4">"{{ prompt.prompt }}"</h3>
+              <div v-if="prompt.ideas && prompt.ideas.length > 0" class="mb-4">
+                <p class="text-lg font-semibold text-[#00FF98]">{{ prompt.ideas[0].title }}</p>
+                <p class="text-base text-gray-300 line-clamp-2">{{ prompt.ideas[0].description }}</p>
+              </div>
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-[#00D37E]/50">
+              <span class="text-sm text-[#00FF98] font-bold">{{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas</span>
+              <span class="text-sm opacity-80">{{ new Date(prompt.created_at).toLocaleDateString() }}</span>
+            </div>
           </NuxtLink>
         </div>
       </div>
@@ -32,8 +44,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
+import gsap from 'gsap';
 import Navbar from '~/components/Navbar.vue';
 import LoginModal from '~/components/LoginModal.vue'; // Assuming LoginModal is still needed for some reason, though not directly used here.
 
@@ -47,6 +60,7 @@ const supabase = useSupabaseClient();
 const userPrompts = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
+const cardContainerRef = ref(null); // Ref for the grid container
 
 const fetchUserPrompts = async () => {
   console.log('fetchUserPrompts called. user.value:', user.value);
@@ -62,7 +76,15 @@ const fetchUserPrompts = async () => {
     console.log('fetchUserPrompts: Fetching prompts for user ID:', userId);
     const { data, error: fetchError } = await supabase
       .from('prompts')
-      .select('id, prompt, created_at')
+      .select(`
+        id,
+        prompt,
+        created_at,
+        ideas (
+          title,
+          description
+        )
+      `)
       .eq('user_id', userId) // Use the correct userId
       .order('created_at', { ascending: false });
 
@@ -79,6 +101,20 @@ const fetchUserPrompts = async () => {
     console.log('fetchUserPrompts: Finished, isLoading set to false.');
   }
 };
+
+watch(userPrompts, (newPrompts) => {
+  if (newPrompts.length > 0) {
+    nextTick(() => {
+      if (cardContainerRef.value) {
+        gsap.fromTo(
+          cardContainerRef.value.children,
+          { opacity: 0, y: 50 }, // From these properties
+          { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power2.out' } // To these properties
+        );
+      }
+    });
+  }
+});
 
 watch(user, (newUser) => {
   console.log('User watch triggered. newUser:', newUser);

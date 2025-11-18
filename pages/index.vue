@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#009358] text-white flex flex-col">
     <header class="py-6">
-      <div class="mx-auto max-w-6xl px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
@@ -9,7 +9,7 @@
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div class="mx-auto max-w-6xl px-6 w-full overflow-hidden">
+        <div class="mx-auto max-w-7xl px-6 w-full overflow-hidden">
           <Hero
             ref="heroComponent"
             @show-money="handleShowMoney"

@@ -8,6 +8,7 @@
               id="hobby-input"
               v-model="inputValue"
               type="text"
+              autocomplete="off"
               class="w-full bg-transparent text-white px-5 py-8 outline-none border border-[#00D37E] rounded-md peer text-lg font-bold"
               placeholder=" "
             />
