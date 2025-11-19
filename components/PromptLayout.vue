@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-white w-[1152px] px-6 mx-auto">
+    <div class="text-white max-w-7xl px-6 mx-auto">
       <div class="flex justify-center items-center mb-16 min-h-[60px]">
         <div v-if="props.error" class="text-center">
           <div class="inline-block bg-red-500/10 p-4 rounded-full mb-4">
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Main content area with consistent height -->
-    <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-6xl px-6">
+    <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-7xl px-6">
       <div
         v-if="isLoading && ideas.length === 0"
         class="flex flex-col items-center justify-center"
@@ -56,11 +56,11 @@
       </div>
 
       <div v-else-if="ideas.length > 0" class="container-centered">
-        <div class="flex justify-between items-center mb-10">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
           <button
             @click="prevIdea"
             :disabled="currentIndex === 0"
-            class="flex items-center gap-2 px-5 py-3 bg-[#00D37E] text-[#006E42] font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex items-center justify-center gap-2 px-5 py-3 bg-[#00D37E] text-[#006E42] font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
           >
             <img
               src="~/assets/arrow-right.svg"
@@ -72,7 +72,7 @@
           <button
             @click="nextIdea"
             :disabled="currentIndex === ideas.length - 1"
-            class="flex items-center gap-2 px-5 py-3 bg-[#00D37E] text-[#006E42] font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex items-center justify-center gap-2 px-5 py-3 bg-[#00D37E] text-[#006E42] font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
           >
             NEXT IDEA
             <img src="~/assets/arrow-right.svg" alt="Next" />
@@ -81,7 +81,7 @@
 
         <div
           ref="cardContainer"
-          class="border border-[#00D37E] rounded-[6px] p-16 relative"
+          class="border border-[#00D37E] rounded-[6px] p-8 md:p-16 relative"
         >
           <div v-if="currentIdea">
             <div class="flex justify-between items-start mb-4">
@@ -96,7 +96,7 @@
                 </div>
 
                 <div ref="cardTitleWrapper" class="overflow-hidden">
-                  <h2 class="text-[62px] font-semibold leading-[1.19] mb-4">
+                  <h2 class="text-[44px] md:text-[62px] font-semibold leading-[1.19] mb-4">
                     {{ currentIdea.title }}
                   </h2>
                 </div>
@@ -104,14 +104,14 @@
             </div>
 
             <div ref="cardDescriptionWrapper" class="overflow-hidden">
-              <p class="text-[22px] leading-[1.5] mb-12">
+              <p class="text-[20px] md:text-[22px] leading-[1.5] mb-12">
                 {{ currentIdea.description }}
               </p>
             </div>
 
             <div
               v-if="!isGenerating && !currentIdea.report"
-              class="p-12 rounded-lg flex flex-col items-center gap-[17px] relative overflow-hidden"
+              class="p-4 md:p-12 rounded-lg flex flex-col items-center gap-[17px] relative overflow-hidden"
             >
               <div ref="marqueeContainer" class="absolute inset-0">
                 <img
