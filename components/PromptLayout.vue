@@ -110,7 +110,7 @@
             </div>
 
             <div
-              v-if="!isGenerating && !currentIdea.report"
+              v-if="!isGenerating && !currentIdea.reports"
               class="p-4 md:p-12 rounded-lg flex flex-col items-center gap-[17px] relative overflow-hidden"
             >
               <div ref="marqueeContainer" class="absolute inset-0">
@@ -176,7 +176,7 @@
               </svg>
               <p class="text-white text-xl font-semibold">Generating Guide...</p>
             </div>
-            <ReportContainer v-if="currentIdea.report && !isGenerating" :reportData="currentIdea.report" />
+            <ReportContainer v-if="currentIdea.reports && !isGenerating" :reportData="currentIdea.reports" />
           </div>
         </div>
       </div>
@@ -340,7 +340,8 @@ const generateGuide = async () => {
     }
 
     const data = await res.json();
-    emit('update:idea', { ...currentIdea.value, report: data.guide });
+    // Ensure data structure is consistent by always using a 'reports' object
+    emit('update:idea', { ...currentIdea.value, reports: data.guide });
   } catch (e) {
     console.error("Error in generateGuide:", e);
     // Optionally, set an error state to show in the UI
@@ -357,7 +358,7 @@ watch(
     // We just need to handle the marquee animation here.
     if (newIdea) {
       nextTick(() => {
-        if (!newIdea.report && marqueeContainer.value) {
+        if (!newIdea.reports && marqueeContainer.value) {
           startMarqueeAnimation();
         }
       });
@@ -368,7 +369,7 @@ watch(
 
 // Initial animation when component is mounted and an idea is already present
 onMounted(() => {
-  if (currentIdea.value && !currentIdea.value.report && marqueeContainer.value) {
+  if (currentIdea.value && !currentIdea.value.reports && marqueeContainer.value) {
     startMarqueeAnimation();
   }
 });
