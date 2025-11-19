@@ -8,17 +8,8 @@
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex justify-center">
-        <div v-if="isLoading" class="my-10">
+        <div class="my-10">
           <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
-        </div>
-        <div v-else-if="error" class="my-10">
-          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
-        </div>
-        <div v-else-if="ideas.length > 0" class="my-10">
-          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
-        </div>
-        <div v-else class="text-center text-2xl">
-          Prompt not found or no ideas generated yet.
         </div>
       </div>
     </main>
