@@ -1,22 +1,32 @@
-# Figma → Nuxt + Tailwind 範例
+# SideBling - AI Career Advisor
 
-這是一個從您提供的 Figma 設計生成的輕量級骨架專案。它包含一個最小化的 Nuxt 3 專案，使用 Tailwind CSS，並包含三個元件（Navbar、Hero、Cards）以及匯出的 SVG 資源。
+This is a Nuxt.js v3 project that serves as an AI-powered career advisor. It leverages the Google Gemini API to generate creative career ideas based on user interests. The project uses Tailwind CSS for styling, GSAP for animations, and is integrated with Supabase for user authentication (Google OAuth) and database storage.
 
-快速開始
+## Key Features
 
-1. 進入專案資料夾：
+- **AI-Powered Suggestions**: Enter a hobby or interest, and the Gemini API will generate three potential career paths.
+- **Detailed Guides**: Select an idea to generate a full step-by-step guide, including earnings potential and a competitive score.
+- **Supabase Integration**: Handles user accounts, Google OAuth, and persists all user interactions, ideas, and generated guides in a PostgreSQL database.
+- **Public Showcase**: The homepage features a running carousel of prompts submitted by all users, allowing for idea discovery even without logging in.
+- **Material Design 3 Theme**: The entire UI has been updated with a comprehensive, semantic color palette based on Material Design 3, configured in `tailwind.config.cjs`.
 
-```bash
-cd /Users/huangjunwei/Desktop/mcp/figma-export
-```
+## Quick Start
 
-2. 安裝依賴並運行開發伺服器：
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
-```bash
-npm install
-npm run dev
-```
+2.  **Set Up Environment Variables**:
+    You will need to set up credentials for both the Gemini API and Supabase.
+    ```bash
+    cp .env.example .env
+    ```
+    Fill in the required values in the newly created `.env` file. For detailed instructions, please refer to `GEMINI_API_KEY.md` and `SUPABASE_SETUP.md`.
 
-注意事項
-- 資源（標誌和圖示）已從 Figma 節點匯出到 `/assets`。
-- 這是一個小範例，旨在幫助您入門；樣式是近似的，並基於 Figma 結構。如果您需要完全一致（響應式變體、字體、精確間距），我可以進一步迭代。
+3.  **Run the Development Server**:
+    ```bash
+    npm run dev
+    ```
+
+The application will be available at `http://localhost:3000`.

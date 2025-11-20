@@ -6,13 +6,13 @@
         v-for="(prompt, index) in [...prompts, ...prompts]"
         :key="index"
         @click="handleCardClick(prompt)"
-        class="w-[320px] h-[200px] shrink-0 bg-transparent p-6 rounded-lg border border-[#00D37E] hover:bg-background-hover-variable transition-colors cursor-pointer flex flex-col justify-between"
+        class="w-[320px] h-[200px] shrink-0 bg-light-primary p-6 rounded-lg border border-light-outline-variant hover:opacity-75 transition-colors cursor-pointer flex flex-col justify-between"
       >
-        <h3 class="text-white font-semibold text-xl">
+        <h3 class="text-light-on-primary font-semibold text-xl">
           "{{ prompt.prompt }}"
         </h3>
-        <div class="inline-flex items-center bg-[#00A160] rounded px-3 py-1 self-start">
-          <span class="text-white text-sm font-semibold">GET IDEAS</span>
+        <div class="inline-flex items-center bg-light-primary-container rounded px-3 py-1 self-start">
+          <span class="text-light-on-primary-container text-sm font-semibold">GET IDEAS</span>
         </div>
       </div>
     </div>

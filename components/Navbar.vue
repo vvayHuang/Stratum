@@ -36,8 +36,8 @@
           </button>
           
           <!-- Dropdown Menu -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-[#00A160] rounded-md shadow-lg py-1 z-20">
-            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm text-white hover:bg-[#00D37E]">
+          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-primary rounded-md shadow-lg py-1 z-20">
+            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm text-light-on-primary hover:bg-light-primary-container">
               Sign out
             </button>
           </div>
@@ -56,8 +56,8 @@
           </button>
           
           <!-- Dropdown Menu (for mobile) -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-[#00A160] rounded-md shadow-lg py-1 z-20">
-            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm text-white hover:bg-[#00D37E]">
+          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-primary rounded-md shadow-lg py-1 z-20">
+            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm text-light-on-primary hover:bg-light-primary-container">
               Sign out
             </button>
           </div>
@@ -69,11 +69,11 @@
     <!-- Off-canvas Menu -->
     <transition name="slide">
       <div v-if="isMenuOpen" class="fixed inset-0 bg-black bg-opacity-50 z-30" @click="isMenuOpen = false">
-        <div @click.stop class="fixed left-0 top-0 h-full w-64 bg-[#00A160] text-white shadow-lg p-4 transform transition-transform duration-300 ease-in-out" 
+        <div @click.stop class="fixed left-0 top-0 h-full w-64 bg-light-primary text-light-on-primary shadow-lg p-4 transform transition-transform duration-300 ease-in-out" 
              :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full'">
           <div class="flex justify-between items-center mb-8">
             <span class="font-bold text-lg">Menu</span>
-            <button @click="isMenuOpen = false" class="text-white">
+            <button @click="isMenuOpen = false" class="text-light-on-primary">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>

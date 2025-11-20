@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-[#009358] text-white flex flex-col">
+  <div class="min-h-screen bg-light-primary text-white flex flex-col">
     <!-- Loading Overlay -->
-    <div v-if="isLoading" class="fixed inset-0 bg-[#009358] flex flex-col items-center justify-center z-50">
+    <div v-if="isLoading" class="fixed inset-0 bg-light-primary flex flex-col items-center justify-center z-50">
       <svg
         class="animate-spin h-10 w-10 text-white mb-4"
         xmlns="http://www.w3.org/2000/svg"

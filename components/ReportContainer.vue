@@ -3,27 +3,27 @@
     <div class="flex justify-between items-center mb-8">
       <div class="flex flex-col gap-3.5">
         <div class="flex flex-col gap-6">
-          <p class="text-2xl font-semibold text-[#00FF98]">EARNINGS POTENTIAL</p>
-          <p class="text-4xl font-semibold text-white">{{ reportData.earnings_potential }}</p>
+          <p class="text-2xl font-semibold text-light-tertiary">EARNINGS POTENTIAL</p>
+          <p class="text-4xl font-semibold text-light-on-primary">{{ reportData.earnings_potential }}</p>
         </div>
-        <p class="text-sm font-semibold text-white">PER MONTH</p>
+        <p class="text-sm font-semibold text-light-on-primary">PER MONTH</p>
       </div>
       <div class="flex flex-col gap-3.5">
         <div class="flex flex-col gap-6">
-          <p class="text-2xl font-semibold text-[#00FF98]">COMPETITIVE SCORE</p>
-          <p class="text-4xl font-semibold text-white">{{ reportData.competitive_score }}/10</p>
+          <p class="text-2xl font-semibold text-light-tertiary">COMPETITIVE SCORE</p>
+          <p class="text-4xl font-semibold text-light-on-primary">{{ reportData.competitive_score }}/10</p>
         </div>
       </div>
     </div>
     <div class="flex flex-col gap-8">
       <div v-for="(step, index) in displayedSteps" :key="index" class="flex flex-col gap-7">
         <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-2.5 bg-[#00FF98] rounded-md px-2 py-1 self-start">
-            <p class="text-lg font-bold text-[#006E42]">STEP {{ step.step_number || index + 1 }}</p>
+          <div class="flex items-center gap-2.5 bg-light-tertiary rounded-md px-2 py-1 self-start">
+            <p class="text-lg font-bold text-light-on-tertiary">STEP {{ step.step_number || index + 1 }}</p>
           </div>
-          <p class="text-2xl font-semibold text-white">{{ step.title }}</p>
+          <p class="text-2xl font-semibold text-light-on-primary">{{ step.title }}</p>
         </div>
-        <p class="text-lg text-white">
+        <p class="text-lg text-light-on-primary">
           {{ step.description }}
         </p>
       </div>
@@ -31,7 +31,7 @@
     <div class="flex justify-center mt-8">
       <button @click="toggleShowAllSteps" class="flex items-center gap-2.5">
         <img src="~/assets/arrow-right-green.svg" alt="Toggle steps" :class="{ 'transform -rotate-180': showAllSteps }" />
-        <p class="text-2xl font-semibold text-white">
+        <p class="text-2xl font-semibold text-light-on-primary">
           {{ showAllSteps ? 'Show less steps' : `Show all ${reportData.steps.length} steps` }}
         </p>
       </button>

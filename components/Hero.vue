@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!isLoading" ref="heroContainer" class="bg-[#00A160] rounded-[15px] p-6">
+    <div v-if="!isLoading" ref="heroContainer" class="bg-light-primary-container rounded-[15px] p-6">
       <div class="flex flex-col md:flex-row items-center gap-4">
         <div class="relative w-full">
           <div class="relative flex-grow">
@@ -9,13 +9,13 @@
               v-model="inputValue"
               type="text"
               autocomplete="off"
-              class="w-full bg-transparent text-white px-5 py-8 outline-none border border-[#00D37E] rounded-md peer text-lg font-bold"
+              class="w-full bg-transparent text-light-on-primary-container px-5 py-8 outline-none border border-light-outline rounded-md peer text-lg font-bold"
               placeholder=" "
             />
             <label
               ref="promptLabel"
               for="hobby-input"
-              class="absolute left-5 top-4 md:top-8 text-white text-xl md:text-base lg:text-2xl font-semibold transition-all duration-200 px-1 -mx-1 peer-placeholder-shown:text-xl md:peer-placeholder-shown:text-base lg:peer-placeholder-shown:text-2xl peer-placeholder-shown:top-4 md:peer-placeholder-shown:top-8 peer-placeholder-shown:bg-transparent peer-focus:text-base md:peer-focus:text-sm lg:peer-focus:text-xl peer-focus:top-2 peer-focus:bg-[#00A160] peer-not-placeholder-shown:text-base md:peer-not-placeholder-shown:text-sm lg:peer-not-placeholder-shown:text-xl peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:bg-[#00A160] cursor-text"
+              class="absolute left-5 top-4 md:top-8 text-light-on-primary-container text-xl md:text-base lg:text-2xl font-semibold transition-all duration-200 px-1 -mx-1 peer-placeholder-shown:text-xl md:peer-placeholder-shown:text-base lg:peer-placeholder-shown:text-2xl peer-placeholder-shown:top-4 md:peer-placeholder-shown:top-8 peer-placeholder-shown:bg-transparent peer-focus:text-base md:peer-focus:text-sm lg:peer-focus:text-xl peer-focus:top-2 peer-focus:bg-light-primary-container peer-not-placeholder-shown:text-base md:peer-not-placeholder-shown:text-sm lg:peer-not-placeholder-shown:text-xl peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:bg-light-primary-container cursor-text"
             >
               What is an interest or hobby that you enjoy?
             </label>
@@ -24,14 +24,14 @@
         <button
           @click="handleClick"
           :disabled="inputValue.trim() === ''"
-          class="w-full md:w-auto md:min-w-[286px] h-[86px] bg-white rounded-md flex items-center justify-center gap-3 px-4 disabled:bg-gray-200 disabled:cursor-not-allowed"
+          class="w-full md:w-auto md:min-w-[286px] h-[86px] bg-light-surface rounded-md flex items-center justify-center gap-3 px-4 disabled:bg-gray-200 disabled:cursor-not-allowed"
         >
           <img src="/assets/icon-money.svg" alt="money" class="w-7 h-7" />
-          <span class="font-bold text-[#009358]">Show me the money</span>
+          <span class="font-bold text-light-on-surface">Show me the money</span>
         </button>
       </div>
     </div>
-    <p v-if="!isLoading" ref="descriptionText" class="mt-4 text-white text-base opacity-80">
+    <p v-if="!isLoading" ref="descriptionText" class="mt-4 text-light-on-primary text-base opacity-80">
       "I like reading romance novels"
     </p>
   </div>

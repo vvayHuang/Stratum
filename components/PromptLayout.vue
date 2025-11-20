@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div class="text-white max-w-7xl px-6 mx-auto">
+    <div class="text-light-on-primary max-w-7xl px-6 mx-auto">
       <div class="flex justify-center items-center mb-16 min-h-[60px]">
         <div v-if="props.error" class="text-center">
-          <div class="inline-block bg-red-500/10 p-4 rounded-full mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="inline-block bg-light-error-container/10 p-4 rounded-full mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-light-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <h3 class="text-2xl font-semibold mb-2">Oops! Something went wrong.</h3>
-          <p class="text-red-400 mb-6">
+          <p class="text-light-error mb-6">
             {{ isOverloadError ? '錯誤請稍後再試' : props.error }}
           </p>
           <button @click="$emit('reset')" class="flex items-center justify-center gap-2 bg-[#00D37E] text-[#006E42] font-bold rounded-md px-6 py-3 text-lg">
@@ -52,7 +52,7 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <p class="text-white text-xl font-semibold">Loading...</p>
+        <p class="text-light-on-primary text-xl font-semibold">Loading...</p>
       </div>
 
       <div v-else-if="ideas.length > 0" class="container-centered">
@@ -60,7 +60,7 @@
           <button
             @click="prevIdea"
             :disabled="currentIndex === 0"
-            class="flex items-center justify-center gap-2 px-5 py-3 bg-[#00D37E] text-[#006E42] font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+            class="flex items-center justify-center gap-2 px-5 py-3 bg-light-secondary-container text-light-on-secondary-container font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
           >
             <img
               src="~/assets/arrow-right.svg"
@@ -72,7 +72,7 @@
           <button
             @click="nextIdea"
             :disabled="currentIndex === ideas.length - 1"
-            class="flex items-center justify-center gap-2 px-5 py-3 bg-[#00D37E] text-[#006E42] font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+            class="flex items-center justify-center gap-2 px-5 py-3 bg-light-secondary-container text-light-on-secondary-container font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
           >
             NEXT IDEA
             <img src="~/assets/arrow-right.svg" alt="Next" />
@@ -81,16 +81,16 @@
 
         <div
           ref="cardContainer"
-          class="border border-[#00D37E] rounded-[6px] p-8 md:p-16 relative"
+          class="border border-light-secondary-container rounded-[6px] p-8 md:p-16 relative"
         >
           <div v-if="currentIdea">
             <div class="flex justify-between items-start mb-4">
               <div>
                 <div
                   ref="ideaLabelWrapper"
-                  class="border border-[#00D37E] rounded-md px-2 py-1 inline-block mb-4 overflow-hidden"
+                  class="border border-light-secondary-container rounded-md px-2 py-1 inline-block mb-4 overflow-hidden"
                 >
-                  <p class="text-[#00FF98] font-bold text-[18px] leading-[1.44]">
+                  <p class="text-light-tertiary font-bold text-[18px] leading-[1.44]">
                     IDEA {{ currentIndex + 1 }} OF {{ ideas.length }}
                   </p>
                 </div>
@@ -154,7 +154,7 @@
               <div ref="generateGuideBtnWrapper" class="overflow-hidden z-10">
                 <button
                   @click="generateGuide"
-                  class="flex items-center justify-center gap-[10px] bg-white text-[#009358] px-[24px] py-[17px] rounded-[4px] font-semibold text-[22px] h-[74px]"
+                  class="flex items-center justify-center gap-[10px] bg-light-on-primary text-light-primary px-[24px] py-[17px] rounded-[4px] font-semibold text-[22px] h-[74px]"
                 >
                   <img src="~/assets/ai-icon.svg" alt="AI" class="w-6 h-6" />
 
@@ -174,7 +174,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <p class="text-white text-xl font-semibold">Generating Guide...</p>
+              <p class="text-light-on-primary text-xl font-semibold">Generating Guide...</p>
             </div>
             <ReportContainer v-if="currentIdea.reports && !isGenerating" :reportData="currentIdea.reports" />
           </div>

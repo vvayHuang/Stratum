@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#009358] text-white flex flex-col">
+  <div class="min-h-screen bg-light-primary text-light-on-primary flex flex-col">
     <header class="py-6">
       <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
         <Navbar />
@@ -10,28 +10,28 @@
       <div class="mx-auto max-w-7xl px-6 w-full py-10">
         <div class="text-center mb-10">
           <h1 class="text-5xl font-bold mb-2">My Ideas</h1>
-          <p class="text-lg text-gray-300">Explore all the brilliant career ideas you've generated!</p>
+          <p class="text-lg text-light-on-primary-container">Explore all the brilliant career ideas you've generated!</p>
         </div>
 
         <div v-if="isLoading" class="text-center text-xl">Loading your ideas...</div>
-        <div v-else-if="error" class="text-center text-xl text-red-400">Error: {{ error }}</div>
+        <div v-else-if="error" class="text-center text-xl text-light-error">Error: {{ error }}</div>
         <div v-else-if="userPrompts.length === 0" class="text-center text-xl">You haven't generated any ideas yet.</div>
         <div v-else ref="cardContainerRef" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <NuxtLink
             v-for="prompt in userPrompts"
             :key="prompt.id"
             :to="`/prompts/${prompt.id}`"
-            class="block bg-transparent p-6 rounded-lg border border-[#00D37E] hover:bg-background-hover-variable transition-colors cursor-pointer flex flex-col justify-between"
+            class="block bg-transparent p-6 rounded-lg border border-light-secondary-container hover:bg-background-hover-variable transition-colors cursor-pointer flex flex-col justify-between"
           >
             <div>
-              <h3 class="text-white font-semibold text-xl mb-4">"{{ prompt.prompt }}"</h3>
+              <h3 class="text-light-on-primary font-semibold text-xl mb-4">"{{ prompt.prompt }}"</h3>
               <div v-if="prompt.ideas && prompt.ideas.length > 0" class="mb-4">
-                <p class="text-lg font-semibold text-[#00FF98]">{{ prompt.ideas[0].title }}</p>
-                <p class="text-base text-gray-300 line-clamp-2">{{ prompt.ideas[0].description }}</p>
+                <p class="text-lg font-semibold text-light-tertiary">{{ prompt.ideas[0].title }}</p>
+                <p class="text-base text-light-on-primary-container line-clamp-2">{{ prompt.ideas[0].description }}</p>
               </div>
             </div>
-            <div class="flex justify-between items-center mt-4 pt-4 border-t border-[#00D37E]/50">
-              <span class="text-sm text-[#00FF98] font-bold">{{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas</span>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-light-secondary-container/50">
+              <span class="text-sm text-light-tertiary font-bold">{{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas</span>
               <span class="text-sm opacity-80">{{ new Date(prompt.created_at).toLocaleDateString() }}</span>
             </div>
           </NuxtLink>
