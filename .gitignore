@@ -2,3 +2,4 @@ node_modules
 .env
 .nuxt/
 .DS_Store
+note.md

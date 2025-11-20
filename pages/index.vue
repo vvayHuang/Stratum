@@ -35,14 +35,17 @@
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
         <div class="mx-auto max-w-7xl px-6 w-full overflow-hidden">
-          <Hero
-            ref="heroComponent"
-            @show-money="handleShowMoney"
-          />
+          <Hero ref="heroComponent" @show-money="handleShowMoney" />
         </div>
       </div>
       <section class="mt-auto">
-        <Cards ref="cardsComponent" :prompts="recentPrompts" @prompt-click="(promptText, promptId) => navigateTo(`/prompts/${promptId}`)" />
+        <Cards
+          ref="cardsComponent"
+          :prompts="recentPrompts"
+          @prompt-click="
+            (promptText, promptId) => navigateTo(`/prompts/${promptId}`)
+          "
+        />
       </section>
     </main>
 
@@ -50,39 +53,50 @@
   </div>
 </template>
 
-<script setup>
-definePageMeta({ auth: false });
-import { ref, watchEffect, onMounted } from "vue";
+<script setup lang="ts">
+import { ref, watchEffect } from "vue";
 import { navigateTo } from '#app';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import Cards from "~/components/Cards.vue";
-
-import LoginModal from "~/components/LoginModal.vue"; // Import LoginModal
+import LoginModal from "~/components/LoginModal.vue";
+import type { Database } from '~/types/database.types';
 
 const user = useSupabaseUser();
-const supabase = useSupabaseClient();
-const recentPrompts = ref([]);
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
-const loginModal = ref(null); // Ref for LoginModal
-const isLoading = ref(false); // Loading state for API call
+const loginModal = ref(null);
+const isLoading = ref(false);
 
-onMounted(async () => {
-  const { data, error } = await supabase
-    .from('prompts')
-    .select('id, prompt') // Select both id and prompt
-    .order('created_at', { ascending: false })
-    .limit(10);
+const { data: recentPrompts, error: fetchError } = await useAsyncData('public-prompts', async () => {
+  const supabase = useSupabaseClient<Database>();
+  
+  // 1. Fetch all prompt IDs
+  const { data: promptIds, error: idsError } = await supabase.from('prompts').select('id').limit(200);
+  if (idsError) throw idsError;
+  if (!promptIds || promptIds.length === 0) return [];
 
-  if (error) {
-    console.error('Error fetching recent prompts:', error);
-  } else {
-    recentPrompts.value = data;
-  }
+  // 2. Shuffle and slice
+  const shuffledIds = promptIds.sort(() => 0.5 - Math.random()).slice(0, 10).map(item => item.id);
+
+  // 3. Fetch full data for the selected prompts
+  const { data: prompts, error: promptsError } = await supabase.from('prompts').select('id, prompt').in('id', shuffledIds);
+  if (promptsError) throw promptsError;
+
+  // 4. Map to final structure, already in the correct format for Cards component
+  return prompts?.map(p => ({
+    id: p.id,
+    prompt: p.prompt, // 'prompt' column from the 'prompts' table
+  })) || [];
+}, {
+  default: () => []
 });
+
+if (fetchError.value) {
+  console.error("Failed to fetch public prompts for cards:", fetchError.value);
+}
 
 watchEffect(() => {
   if (user.value && loginModal.value) {
@@ -135,6 +149,5 @@ const handleShowMoney = async (p) => {
     isLoading.value = false;
   }
 };
-
-
 </script>
+

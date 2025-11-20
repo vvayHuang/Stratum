@@ -35,9 +35,10 @@
 5.  在「授權的 JavaScript 來源 (Authorized JavaScript origins)」中，添加您的應用程式的 URL。
     *   開發環境：`http://localhost:3000` (或您 Nuxt 應用程式運行的任何埠號)。
     *   生產環境：您的應用程式的生產 URL (例如：`https://your-app.com`)。
-6.  在「授權的重新導向 URI (Authorized redirect URIs)」中，添加您的應用程式處理 Google 認證回調的 URL。
-    *   開發環境：`http://localhost:3000/api/auth/callback` (或您 Nuxt 應用程式運行的任何埠號)。
-    *   生產環境：`https://your-app.com/api/auth/callback`。
+6.  在「授權的重新導向 URI (Authorized redirect URIs)」中，添加您的 Supabase 專案提供的回呼 URL。
+    *   **重要提示**: 這一步是整合 Supabase 第三方登入最關鍵的部分。您必須使用 Supabase 提供的回呼 URL，而不是您自己的應用程式 URL。
+    *   您可以在 Supabase 儀表板的 **Authentication > Providers > Google** 設定頁面中找到這個 URL。它的格式通常是：`https://<您的專案參考 ID>.supabase.co/auth/v1/callback`。
+    *   請將上述 URL 完整複製並貼到「授權的重新導向 URI」欄位中。
 7.  點擊「建立 (Create)」。
 8.  您將看到一個彈出視窗，其中包含您的「用戶端 ID (Client ID)」和「用戶端密鑰 (Client Secret)」。**請務必記下這些值**，因為您將在應用程式的環境變數中使用它們。
 
@@ -49,20 +50,16 @@
 2.  搜尋「Google People API」。
 3.  點擊「啟用 (Enable)」。
 
-## 步驟 5: 設定環境變數
+## 步驟 5: 在 Supabase 中設定 Google Provider 並檢查環境變數
 
-在您的 Nuxt.js 專案中，您需要定義以下環境變數。通常，這些變數會儲存在 `.env` 檔案中，並透過 `nuxt.config.ts` 暴露給應用程式。
+取得 Google Client ID 和 Client Secret 後，您需要將它們設定在 Supabase 儀表板中，而不是直接放在專案的 `.env` 檔案裡。
 
-請在您的 `.env` 檔案中添加以下內容 (替換為您從 Google Cloud Console 獲得的實際值)：
+1.  **前往 Supabase 儀表板**
+    *   在您的專案中，導航到 **Authentication > Providers**。
+    *   找到並啟用 **Google**。
+    *   將您從 Google Cloud Console 複製的 **Client ID** 和 **Client Secret** 貼入對應的欄位中。
+    *   點擊 **Save**。
 
-```
-NUXT_PUBLIC_GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
-NUXT_GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
-NUXT_PUBLIC_GOOGLE_REDIRECT_URI="http://localhost:3000/api/auth/callback" # 或您的生產環境 URL
-```
-
-*   `NUXT_PUBLIC_GOOGLE_CLIENT_ID`: 這是您從 Google Cloud Console 獲得的 OAuth 用戶端 ID。`NUXT_PUBLIC_` 前綴使其在客戶端和伺服器端都可用。
-*   `NUXT_GOOGLE_CLIENT_SECRET`: 這是您從 Google Cloud Console 獲得的 OAuth 用戶端密鑰。**此變數不應暴露給客戶端**，因此沒有 `NUXT_PUBLIC_` 前綴。它將僅在伺服器端 (例如 `server/api/auth/callback.ts`) 使用。
-*   `NUXT_PUBLIC_GOOGLE_REDIRECT_URI`: 這是您在 Google Cloud Console 中設定的授權重新導向 URI。`NUXT_PUBLIC_` 前綴使其在客戶端和伺服器端都可用。
-
-完成這些步驟後，您的應用程式將準備好整合 Google 認證。
+2.  **設定專案的環境變數**
+    *   您的 Nuxt 專案只需要連接到 Supabase 所需的環境變數。請確保您的 `.env` 檔案中包含 `SUPABASE_URL` 和 `SUPABASE_KEY`。
+    *   詳細的環境變數結構，請參閱 `SUPABASE_SETUP.md` 文件。
