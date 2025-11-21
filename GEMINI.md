@@ -2,7 +2,7 @@
 
 這是一個從 Figma 設計啟動的 Nuxt.js v3 專案。它使用 Tailwind CSS 進行樣式設計，並使用 GSAP 進行動畫。該專案的目標是提供一個網頁介面，讓使用者可以根據他們的興趣，使用 Google Gemini API 獲取職涯建議。
 
-該專案現在整合了 **Supabase**，用於使用者身份驗證（透過 Google OAuth）和資料庫儲存。
+該專案現在整合了 **Supabase**，用於使用者身份驗證（透過 Google OAuth）和資料庫儲存。為了讓所有訪客都能探索這個應用的可能性，首頁的卡片輪播會展示由所有使用者提交的公開提示詞。
 
 該專案的結構是一個標準的 Nuxt 應用程式：
 - `pages/index.vue`：主要且唯一的頁面，處理主要佈局和 API 呼叫。
@@ -52,10 +52,13 @@
 # 開發慣例
 
 - **樣式**：專案使用 Tailwind CSS。實用程式類別應直接在 Vue 元件中用於樣式設計。
+- **色彩主題**：專案採用了基於 Material Design 3 的語義化色彩系統。所有顏色變數都在 `tailwind.config.cjs` 中定義，並分為 `light` 和 `dark` 兩種模式，同時也提供了完整的調色板（例如 `primary`、`secondary` 等）。開發時應優先使用這些語義化名稱（例如 `bg-light-primary`, `text-light-on-surface`），而不是寫死的色碼，以確保主題的一致性。
 - **身份驗證**：身份驗證由 `@nuxtjs/supabase` 模組處理。`Navbar.vue` 和 `LoginModal.vue` 等 UI 元件使用組合式函數 (`useSupabaseUser`、`useSupabaseClient`) 來管理使用者狀態和操作。
 - **錯誤處理**：當 Gemini API 過載（503 錯誤）或發生其他錯誤時，UI 會提供美化的錯誤訊息，並提供使用者返回初始狀態的選項。
 
 # API 整合與資料庫
+
+為了讓所有訪客都能看到首頁上的提示詞輪播，`prompts` 資料表已設置為公開可讀。這是透過一條寬鬆的 RLS (Row Level Security) 策略實現的，該策略僅適用於 `SELECT` 操作。`INSERT`、`UPDATE` 和 `DELETE` 操作仍然受到限制，只有已登入的使用者才能對其自己的資料進行操作。
 
 該專案的後端是一個單一的無伺服器函數 (`server/api/gemini.post.ts`)，它有兩種主要操作模式，由前端協調。
 

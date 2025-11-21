@@ -1,0 +1,14 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stacked Layers / Open Book Concept - Refined -->
+  <!-- Bottom Layer -->
+  <path d="M50 90L10 70L50 50L90 70L50 90Z" fill="#89511F"/>
+  <path d="M10 70V80L50 100L90 80V70L50 90L10 70Z" fill="#5E2F00"/>
+  
+  <!-- Middle Layer -->
+  <path d="M50 70L10 50L50 30L90 50L50 70Z" fill="#CF7D34"/>
+  <path d="M10 50V60L50 80L90 60V50L50 70L10 50Z" fill="#89511F"/>
+
+  <!-- Top Layer -->
+  <path d="M50 50L10 30L50 10L90 30L50 50Z" fill="#FFB780"/>
+  <path d="M10 30V40L50 60L90 40V30L50 50L10 30Z" fill="#CF7D34"/>
+</svg>

@@ -13,7 +13,7 @@
 
       <!-- Logo -->
       <NuxtLink to="/">
-        <img src="/assets/logo.svg" alt="logo" class="h-12 w-auto" />
+        <img src="/logo_horizontal.svg" alt="Stratum Logo" class="h-12 w-auto" />
       </NuxtLink>
     </div>
 

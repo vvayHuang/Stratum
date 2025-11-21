@@ -101,6 +101,13 @@ SUPABASE_SERVICE_KEY="your_supabase_service_role_key"
     ```
 -   **說明**：`response` 欄位儲存了從 Gemini API 收到的原始 JSON 回應（包含多個想法）。
 
+-   **行級安全性 (Row Level Security - RLS)**：為了保護使用者資料，同時允許在首頁公開展示提示詞，`prompts` 資料表啟用了 RLS 並設定了以下策略：
+    1.  **個人存取策略**：允許使用者對其自己的提示詞進行所有操作（`INSERT`, `SELECT`, `UPDATE`, `DELETE`）。
+        -   `CREATE POLICY "Allow individual access to interactions" ON public.prompts FOR ALL USING (auth.uid() = user_id);`
+    2.  **公開讀取策略**：允許任何訪客（包括未登入者）讀取（`SELECT`）所有提示詞，以便在首頁輪播中展示。
+        -   `CREATE POLICY "Public prompts are viewable by everyone." ON public.prompts FOR SELECT USING (true);`
+        -   **注意**：這條策略是實現首頁公開展示功能的關鍵。
+
 ### `ideas` 資料表
 
 此資料表儲存從使用者提示詞中由 AI 生成的各個獨立想法。

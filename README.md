@@ -1,4 +1,4 @@
-# SideBling - AI Career Advisor
+# Stratum - AI Career Advisor
 
 This is a Nuxt.js v3 project that serves as an AI-powered career advisor. It leverages the Google Gemini API to generate creative career ideas based on user interests. The project uses Tailwind CSS for styling, GSAP for animations, and is integrated with Supabase for user authentication (Google OAuth) and database storage.
 

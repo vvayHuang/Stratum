@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-light-surface p-10 rounded-lg shadow-lg text-center relative max-w-lg">
       <button @click="closeModal" class="absolute top-2 right-4 text-light-outline hover:text-light-on-surface text-2xl">&times;</button>
-      <h2 class="text-4xl font-bold mb-2 text-light-on-surface">Welcome to SideBling</h2>
+      <h2 class="text-4xl font-bold mb-2 text-light-on-surface">Welcome to Stratum</h2>
       <p class="mb-6 text-light-on-surface-variant">Sign in to get personalized career advice and unlock full features.</p>
       <button
         @click="signInWithGoogle"

@@ -5,7 +5,10 @@ export default defineNuxtConfig({
   css: ['~/assets/css/tailwind.css'],
   app: {
     head: {
-      title: 'Figma Export - SideBling'
+      title: 'Stratum - Career Insights',
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }
+      ]
     }
   },
   postcss: {
