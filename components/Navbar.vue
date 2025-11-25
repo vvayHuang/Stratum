@@ -1,25 +1,25 @@
 <template>
-  <div class="relative flex items-center justify-between w-full text-light-on-surface">
+  <div class="relative flex items-center justify-between w-full p-4 text-light-on-surface">
     <!-- Left side: Hamburger Menu + Logo -->
     <div class="flex items-center gap-4">
       <!-- Hamburger Menu (visible on tablet/mobile) -->
       <div class="lg:hidden">
         <button @click="isMenuOpen = true" class="p-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>
 
       <!-- Logo -->
-      <NuxtLink to="/">
-        <img src="/logo_horizontal.svg" alt="Stratum Logo" class="h-12 w-auto" />
+      <NuxtLink to="/" class="px-2 py-1">
+        <img src="/logo_horizontal.svg" alt="Stratum Logo" class="w-auto h-12" />
       </NuxtLink>
 
       <!-- Desktop Navigation -->
-      <nav class="hidden lg:flex gap-[38px] items-center">
-        <NuxtLink to="/" class="font-semibold text-xl">Community</NuxtLink>
-        <button class="font-semibold text-xl">Contact</button>
+      <nav class="hidden lg:flex gap-8 items-center">
+        <NuxtLink to="/" class="font-medium text-m">Community</NuxtLink>
+        <button class="font-medium text-m">Contact</button>
       </nav>
     </div>
 
@@ -31,44 +31,41 @@
         <!-- Authenticated State -->
         <div v-if="user" class="relative">
           <button ref="dropdownButtonRef" @click="isDropdownOpen = !isDropdownOpen" class="flex items-center gap-2">
-            <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="h-8 w-8 rounded-full" />
-            <span class="font-semibold hidden lg:block">{{ user.user_metadata.full_name }}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
+            <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
+            <span class="hidden font-medium lg:block text-m">{{ user.user_metadata.full_name }}</span>
           </button>
           
           <!-- Dropdown Menu -->
           <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-surface text-light-on-surface rounded-md shadow-lg py-1 z-20 border border-light-outline-variant">
-            <NuxtLink to="/my-ideas" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant" @click="isDropdownOpen = false">
+            <NuxtLink to="/my-ideas" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant" @click="isDropdownOpen = false">
               My Ideas
             </NuxtLink>
-            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant">
+            <button @click="handleSignOut" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant">
               Sign out
             </button>
           </div>
         </div>
         <!-- Unauthenticated State -->
-        <button v-else @click="() => emit('open-login-modal')" class="font-semibold text-sm px-4 py-2.5 bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
+        <button v-else @click="() => emit('open-login-modal')" class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
           Login
         </button>
       </div>
     </div>
     
     <!-- User Info / Login (for mobile) -->
-    <div class="lg:hidden flex items-center">
+    <div class="flex items-center lg:hidden">
         <!-- Authenticated State -->
         <div v-if="user" class="relative">
           <button ref="dropdownButtonRefMobile" @click="isDropdownOpen = !isDropdownOpen" class="flex items-center gap-2">
-            <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="h-8 w-8 rounded-full" />
+            <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
           </button>
           
           <!-- Dropdown Menu (for mobile) -->
           <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-surface text-light-on-surface rounded-md shadow-lg py-1 z-20 border border-light-outline-variant">
-            <NuxtLink to="/my-ideas" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant" @click="isDropdownOpen = false">
+            <NuxtLink to="/my-ideas" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant" @click="isDropdownOpen = false">
               My Ideas
             </NuxtLink>
-            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant">
+            <button @click="handleSignOut" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant">
               Sign out
             </button>
           </div>
@@ -79,22 +76,22 @@
 
     <!-- Off-canvas Menu -->
     <transition name="slide">
-      <div v-if="isMenuOpen" class="fixed inset-0 bg-black bg-opacity-50 z-30" @click="isMenuOpen = false">
-        <div @click.stop class="fixed left-0 top-0 h-full w-64 bg-light-primary text-light-on-primary shadow-lg p-4 transform transition-transform duration-300 ease-in-out" 
+      <div v-if="isMenuOpen" class="fixed inset-0 z-30 bg-black bg-opacity-50" @click="isMenuOpen = false">
+        <div @click.stop class="fixed top-0 left-0 h-full w-64 p-4 shadow-lg bg-light-primary text-light-on-primary transform transition-transform duration-300 ease-in-out" 
              :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full'">
-          <div class="flex justify-between items-center mb-8">
-            <span class="font-bold text-lg">Menu</span>
+          <div class="flex items-center justify-between mb-8">
+            <span class="text-lg font-bold">Menu</span>
             <button @click="isMenuOpen = false" class="text-light-on-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
           <nav class="flex flex-col gap-6">
-            <NuxtLink to="/" @click="isMenuOpen = false" class="font-semibold text-xl">Home</NuxtLink>
-            <button class="font-semibold text-xl text-left">FAQ</button>
-            <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false" class="font-semibold text-xl">My Ideas</NuxtLink>
-            <button v-if="!user" @click="openLoginAndCloseMenu" class="font-semibold text-xl text-left">Login</button>
+            <NuxtLink to="/" @click="isMenuOpen = false" class="font-medium text-m">Home</NuxtLink>
+            <button class="text-left font-medium text-m">FAQ</button>
+            <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false" class="font-medium text-m">My Ideas</NuxtLink>
+            <button v-if="!user" @click="openLoginAndCloseMenu" class="text-left font-medium text-m">Login</button>
           </nav>
         </div>
       </div>

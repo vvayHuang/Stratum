@@ -34,7 +34,7 @@
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div class="mx-auto max-w-7xl px-6 w-full overflow-hidden">
+        <div class="mx-auto max-w-3xl px-6 w-full overflow-hidden">
           <Hero ref="heroComponent" @show-money="handleShowMoney" />
         </div>
       </div>

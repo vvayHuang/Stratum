@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-light-primary text-light-on-primary flex flex-col">
+  <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
     <header class="py-6">
       <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
         <Navbar />
@@ -9,7 +9,7 @@
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="mx-auto max-w-7xl px-6 w-full py-10">
         <div class="text-center mb-10">
-          <h1 class="text-5xl font-bold mb-2">My Ideas</h1>
+          <h1 class="text-5xl font-bold mb-2 font-brand italic">My Ideas</h1>
           <p class="text-lg text-light-on-primary-container">Explore all the brilliant career ideas you've generated!</p>
         </div>
 
