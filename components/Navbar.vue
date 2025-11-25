@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex items-center justify-between w-full">
+  <div class="relative flex items-center justify-between w-full text-light-on-surface">
     <!-- Left side: Hamburger Menu + Logo -->
     <div class="flex items-center gap-4">
       <!-- Hamburger Menu (visible on tablet/mobile) -->
@@ -15,16 +15,16 @@
       <NuxtLink to="/">
         <img src="/logo_horizontal.svg" alt="Stratum Logo" class="h-12 w-auto" />
       </NuxtLink>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex gap-[38px] items-center">
+        <NuxtLink to="/" class="font-semibold text-xl">Community</NuxtLink>
+        <button class="font-semibold text-xl">Contact</button>
+      </nav>
     </div>
 
-    <!-- Right side: Desktop Navigation + User Info -->
-    <div class="hidden lg:flex items-center gap-8">
-      <!-- Desktop Navigation -->
-      <nav class="flex gap-8 items-center">
-        <NuxtLink to="/" class="font-semibold text-xl">Home</NuxtLink>
-        <button class="font-semibold text-xl">FAQ</button>
-        <NuxtLink v-if="user" to="/my-ideas" class="font-semibold text-xl">My Ideas</NuxtLink>
-      </nav>
+    <!-- Right side: User Info / Login -->
+    <div class="flex items-center gap-8">
 
       <!-- User Info / Login -->
       <div class="flex items-center">
@@ -33,17 +33,25 @@
           <button ref="dropdownButtonRef" @click="isDropdownOpen = !isDropdownOpen" class="flex items-center gap-2">
             <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="h-8 w-8 rounded-full" />
             <span class="font-semibold hidden lg:block">{{ user.user_metadata.full_name }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
           
           <!-- Dropdown Menu -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-primary rounded-md shadow-lg py-1 z-20">
-            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm text-light-on-primary hover:bg-light-primary-container">
+          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-surface text-light-on-surface rounded-md shadow-lg py-1 z-20 border border-light-outline-variant">
+            <NuxtLink to="/my-ideas" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant" @click="isDropdownOpen = false">
+              My Ideas
+            </NuxtLink>
+            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant">
               Sign out
             </button>
           </div>
         </div>
         <!-- Unauthenticated State -->
-        <button v-else @click="() => emit('open-login-modal')" class="font-semibold text-xl">Login</button>
+        <button v-else @click="() => emit('open-login-modal')" class="font-semibold text-sm px-4 py-2.5 bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
+          Login
+        </button>
       </div>
     </div>
     
@@ -56,8 +64,11 @@
           </button>
           
           <!-- Dropdown Menu (for mobile) -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-primary rounded-md shadow-lg py-1 z-20">
-            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm text-light-on-primary hover:bg-light-primary-container">
+          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-surface text-light-on-surface rounded-md shadow-lg py-1 z-20 border border-light-outline-variant">
+            <NuxtLink to="/my-ideas" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant" @click="isDropdownOpen = false">
+              My Ideas
+            </NuxtLink>
+            <button @click="handleSignOut" class="block w-full text-left px-4 py-2 text-sm hover:bg-light-surface-variant">
               Sign out
             </button>
           </div>

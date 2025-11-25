@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     head: {
       title: 'Stratum - Career Insights',
       link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }
+        { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap' }
       ]
     }
   },
