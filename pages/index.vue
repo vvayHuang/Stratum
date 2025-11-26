@@ -26,27 +26,32 @@
     </div>
 
     <header class="py-6">
-      <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-[1440px] px-4 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
 
-    <main class="flex-grow flex flex-col pb-10 overflow-hidden">
+    <main class="flex-grow flex flex-col overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div class="mx-auto max-w-3xl px-6 w-full overflow-hidden">
+        <div class="mx-auto max-w-3xl py-64 w-full overflow-hidden">
           <Hero ref="heroComponent" @show-money="handleShowMoney" />
         </div>
       </div>
-      <section class="mt-auto">
-        <Cards
-          ref="cardsComponent"
+      
+      
+      <div class="mx-auto max-w-[1440px] px-4 w-full mt-12 mb-20">
+        <CommunitySection 
           :prompts="recentPrompts"
-          @prompt-click="
-            (promptText, promptId) => navigateTo(`/prompts/${promptId}`)
-          "
+          @prompt-click="(promptText, promptId) => navigateTo(`/prompts/${promptId}`)"
         />
-      </section>
+      </div>
+
+      
+
+      <div class="w-full">
+        <Footer />
+      </div>
     </main>
 
     <LoginModal ref="loginModal" />
@@ -60,7 +65,9 @@ import { useSupabaseUser, useSupabaseClient } from '#imports';
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
+import CommunitySection from "~/components/CommunitySection.vue";
 import Cards from "~/components/Cards.vue";
+import Footer from "~/components/Footer.vue";
 import LoginModal from "~/components/LoginModal.vue";
 import type { Database } from '~/types/database.types';
 
@@ -73,22 +80,27 @@ const isLoading = ref(false);
 const { data: recentPrompts, error: fetchError } = await useAsyncData('public-prompts', async () => {
   const supabase = useSupabaseClient<Database>();
   
-  // 1. Fetch all prompt IDs
-  const { data: promptIds, error: idsError } = await supabase.from('prompts').select('id').limit(200);
-  if (idsError) throw idsError;
-  if (!promptIds || promptIds.length === 0) return [];
-
-  // 2. Shuffle and slice
-  const shuffledIds = promptIds.sort(() => 0.5 - Math.random()).slice(0, 10).map(item => item.id);
-
-  // 3. Fetch full data for the selected prompts
-  const { data: prompts, error: promptsError } = await supabase.from('prompts').select('id, prompt').in('id', shuffledIds);
+  // Fetch prompts with created_at and count of ideas
+  const { data: prompts, error: promptsError } = await supabase
+    .from('prompts')
+    .select(`
+      id,
+      prompt,
+      created_at,
+      ideas:ideas(count)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(200);
+  
   if (promptsError) throw promptsError;
+  if (!prompts || prompts.length === 0) return [];
 
-  // 4. Map to final structure, already in the correct format for Cards component
-  return prompts?.map(p => ({
+  // Map to final structure with ideas count
+  return prompts.map(p => ({
     id: p.id,
-    prompt: p.prompt, // 'prompt' column from the 'prompts' table
+    prompt: p.prompt,
+    created_at: p.created_at,
+    ideas_count: Array.isArray(p.ideas) ? p.ideas.length : 0,
   })) || [];
 }, {
   default: () => []

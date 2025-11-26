@@ -12,6 +12,9 @@
             placeholder="What is an interest or hobby that you enjoy?"
           />
         </div>
+        
+        <HeroSuggestions @select="handleSuggestionSelect" />
+
         <button
           @click="handleClick"
           :disabled="inputValue.trim() === ''"
@@ -30,6 +33,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import gsap from "gsap";
+import HeroSuggestions from "./HeroSuggestions.vue";
 
 const heroContainer = ref(null);
 const descriptionText = ref(null);
@@ -43,6 +47,10 @@ const emit = defineEmits(["show-money"]);
 
 const handleClick = () => {
   emit("show-money", inputValue.value);
+};
+
+const handleSuggestionSelect = (text) => {
+  inputValue.value = text;
 };
 
 const playHeroAnimation = () => {
