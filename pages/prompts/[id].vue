@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-light-primary text-light-on-primary flex flex-col">
+  <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
     <header class="py-6">
-      <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex justify-center">
-        <div class="my-10">
+        <div class="my-10 w-full">
           <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
         </div>
       </div>

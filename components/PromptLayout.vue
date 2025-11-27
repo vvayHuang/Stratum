@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-light-on-primary max-w-7xl px-6 mx-auto">
+    <div class="text-light-on-primary max-w-[1440px] px-6 mx-auto">
       <div class="flex justify-center items-center mb-16 min-h-[60px]">
         <div v-if="props.error" class="text-center">
           <div class="inline-block bg-light-error-container/10 p-4 rounded-full mb-4">
@@ -12,14 +12,14 @@
           <p class="text-light-error mb-6">
             {{ isOverloadError ? '錯誤請稍後再試' : props.error }}
           </p>
-          <button @click="$emit('reset')" class="flex items-center justify-center gap-2 bg-[#00D37E] text-[#006E42] font-bold rounded-md px-6 py-3 text-lg">
+          <button @click="$emit('reset')" class="flex items-center justify-center gap-2 bg-light-primary text-light-on-primary font-bold rounded-md px-6 py-3 text-lg">
             <img src="~/assets/arrow-right.svg" alt="Return" class="transform rotate-180" />
             返回
           </button>
         </div>
         <p
           v-else-if="!isLoading"
-          class="text-center text-3xl font-semibold"
+          class="text-center text-3xl font-brand text-light-on-surface"
         >
           “{{ prompt }}”
         </p>
@@ -27,13 +27,13 @@
     </div>
 
     <!-- Main content area with consistent height -->
-    <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-7xl px-6">
+    <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-[1440px] w-full px-6">
       <div
         v-if="isLoading && ideas.length === 0"
         class="flex flex-col items-center justify-center"
       >
         <svg
-          class="animate-spin h-10 w-10 text-white mb-4"
+          class="animate-spin h-10 w-10 text-light-primary mb-4"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -52,51 +52,51 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <p class="text-light-on-primary text-xl font-semibold">Loading...</p>
+        <p class="text-light-on-surface text-xl font-semibold">Loading...</p>
       </div>
 
-      <div v-else-if="ideas.length > 0" class="container-centered">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+      <div v-else-if="ideas.length > 0" class="container-centered w-full">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <button
             @click="prevIdea"
             :disabled="currentIndex === 0"
-            class="flex items-center justify-center gap-2 px-5 py-3 bg-light-secondary-container text-light-on-secondary-container font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+            class="flex items-center justify-center gap-2 px-6 py-3 bg-light-secondary-container text-light-on-secondary-container font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto transition-colors hover:opacity-90"
           >
             <img
               src="~/assets/arrow-right.svg"
               alt="Previous"
-              class="transform rotate-180"
+              class="transform rotate-180 w-5 h-5"
             />
-            PREV IDEA
+            Prev Idea
           </button>
           <button
             @click="nextIdea"
             :disabled="currentIndex === ideas.length - 1"
-            class="flex items-center justify-center gap-2 px-5 py-3 bg-light-secondary-container text-light-on-secondary-container font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+            class="flex items-center justify-center gap-2 px-6 py-3 bg-light-secondary-container text-light-on-secondary-container font-bold rounded-md text-lg disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto transition-colors hover:opacity-90"
           >
-            NEXT IDEA
-            <img src="~/assets/arrow-right.svg" alt="Next" />
+            Next Idea
+            <img src="~/assets/arrow-right.svg" alt="Next" class="w-5 h-5" />
           </button>
         </div>
 
         <div
           ref="cardContainer"
-          class="border border-light-secondary-container rounded-[6px] p-8 md:p-16 relative"
+          class="bg-secondary-35 text-white rounded-[6px] p-8 md:p-16 relative overflow-hidden min-h-[600px]"
         >
           <div v-if="currentIdea">
             <div class="flex justify-between items-start mb-4">
               <div>
                 <div
                   ref="ideaLabelWrapper"
-                  class="border border-light-secondary-container rounded-md px-2 py-1 inline-block mb-4 overflow-hidden"
+                  class="bg-light-tertiary-container text-light-on-tertiary-container rounded-md px-3 py-1 inline-block mb-6 overflow-hidden"
                 >
-                  <p class="text-light-tertiary font-bold text-[18px] leading-[1.44]">
+                  <p class="font-bold text-sm tracking-wider uppercase">
                     IDEA {{ currentIndex + 1 }} OF {{ ideas.length }}
                   </p>
                 </div>
 
                 <div ref="cardTitleWrapper" class="overflow-hidden">
-                  <h2 class="text-[44px] md:text-[62px] font-semibold leading-[1.19] mb-4">
+                  <h2 class="text-[40px] md:text-[56px] font-brand font-normal leading-[1.1] mb-6 text-light-on-secondary">
                     {{ currentIdea.title }}
                   </h2>
                 </div>
@@ -104,77 +104,88 @@
             </div>
 
             <div ref="cardDescriptionWrapper" class="overflow-hidden">
-              <p class="text-[20px] md:text-[22px] leading-[1.5] mb-12">
+              <p class="text-[18px] md:text-[20px] leading-[1.6] mb-16 text-light-on-secondary">
                 {{ currentIdea.description }}
               </p>
             </div>
 
             <div
               v-if="!isGenerating && !currentIdea.reports"
-              class="p-4 md:p-12 rounded-lg flex flex-col items-center gap-[17px] relative overflow-hidden"
+              class="relative flex flex-col items-center justify-center py-12 overflow-hidden"
             >
-              <div ref="marqueeContainer" class="absolute inset-0">
-                <img
-                  src="~/assets/group1.svg"
-                  alt="decoration"
-                  class="absolute w-full left-1/2 -translate-x-1/2 top-[38px]"
-                />
-
-                <img
-                  src="~/assets/group2.svg"
-                  alt="decoration"
-                  class="absolute w-full left-1/2 -translate-x-1/2 top-[138px]"
-                />
-
-                <img
-                  src="~/assets/group3.svg"
-                  alt="decoration"
-                  class="absolute w-full left-1/2 -translate-x-1/2 top-[238px]"
-                />
-
-                <img
-                  src="~/assets/group1.svg"
-                  alt="decoration"
-                  class="absolute w-full left-1/2 -translate-x-1/2 top-[338px]"
-                />
-
-                <img
-                  src="~/assets/group2.svg"
-                  alt="decoration"
-                  class="absolute w-full left-1/2 -translate-x-1/2 top-[438px]"
-                />
-
-                <img
-                  src="~/assets/group3.svg"
-                  alt="decoration"
-                  class="absolute w-full left-1/2 -translate-x-1/2 top-[538px]"
-                />
+              <!-- Background Decoration (Steps Placeholder Marquee) -->
+              <div ref="marqueeContainer" class="absolute inset-0 flex flex-col gap-8 opacity-20 pointer-events-none select-none">
+                <!-- Sequence 1 -->
+                <div class="flex items-center gap-6">
+                  <div class="w-16 h-16 rounded-full bg-light-surface-variant shrink-0"></div>
+                  <div class="flex flex-col gap-3 w-full">
+                    <div class="h-5 w-full rounded-full bg-light-surface-variant"></div>
+                    <div class="h-5 w-3/4 rounded-full bg-light-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="w-16 h-16 rounded-full bg-light-surface-variant shrink-0"></div>
+                  <div class="flex flex-col gap-3 w-full">
+                    <div class="h-5 w-full rounded-full bg-light-surface-variant"></div>
+                    <div class="h-5 w-3/4 rounded-full bg-light-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="w-16 h-16 rounded-full bg-light-surface-variant shrink-0"></div>
+                  <div class="flex flex-col gap-3 w-full">
+                    <div class="h-5 w-full rounded-full bg-light-surface-variant"></div>
+                    <div class="h-5 w-3/4 rounded-full bg-light-surface-variant"></div>
+                  </div>
+                </div>
+                
+                <!-- Sequence 2 (Duplicate for loop) -->
+                <div class="flex items-center gap-6">
+                  <div class="w-16 h-16 rounded-full bg-light-surface-variant shrink-0"></div>
+                  <div class="flex flex-col gap-3 w-full">
+                    <div class="h-5 w-full rounded-full bg-light-surface-variant"></div>
+                    <div class="h-5 w-3/4 rounded-full bg-light-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="w-16 h-16 rounded-full bg-light-surface-variant shrink-0"></div>
+                  <div class="flex flex-col gap-3 w-full">
+                    <div class="h-5 w-full rounded-full bg-light-surface-variant"></div>
+                    <div class="h-5 w-3/4 rounded-full bg-light-surface-variant"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="w-16 h-16 rounded-full bg-light-surface-variant shrink-0"></div>
+                  <div class="flex flex-col gap-3 w-full">
+                    <div class="h-5 w-full rounded-full bg-light-surface-variant"></div>
+                    <div class="h-5 w-3/4 rounded-full bg-light-surface-variant"></div>
+                  </div>
+                </div>
               </div>
 
-              <div ref="generateGuideBtnWrapper" class="overflow-hidden z-10">
+              <div ref="generateGuideBtnWrapper" class="overflow-hidden z-10 relative">
                 <button
                   @click="generateGuide"
-                  class="flex items-center justify-center gap-[10px] bg-light-on-primary text-light-primary px-[24px] py-[17px] rounded-[4px] font-semibold text-[22px] h-[74px]"
+                  class="flex items-center justify-center gap-3 bg-light-tertiary text-light-on-tertiary px-8 py-5 rounded-[4px] font-bold text-[20px] shadow-lg hover:opacity-90 transition-opacity w-full md:w-auto"
                 >
-                  <img src="~/assets/ai-icon.svg" alt="AI" class="w-6 h-6" />
-
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="currentColor"/>
+                  </svg>
                   GENERATE GUIDE
                 </button>
               </div>
 
-              <div ref="generateGuideTextWrapper" class="overflow-hidden z-10">
-                <p class="text-center text-[18px] font-bold leading-[1.44]">
-                  This will provide you with every bling-worthy step required to
-                  pull this off.
+              <div ref="generateGuideTextWrapper" class="overflow-hidden z-10 mt-6 relative">
+                <p class="text-center text-[16px] text-light-surface-variant font-medium">
+                  This will provide you with every bling-worthy step required to pull this off.
                 </p>
               </div>
             </div>
             <div v-else-if="isGenerating" class="flex flex-col items-center justify-center h-[400px]">
-              <svg class="animate-spin h-10 w-10 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin h-10 w-10 text-light-secondary-container mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <p class="text-light-on-primary text-xl font-semibold">Generating Guide...</p>
+              <p class="text-light-secondary-container text-xl font-semibold">Generating Guide...</p>
             </div>
             <ReportContainer v-if="currentIdea.reports && !isGenerating" :reportData="currentIdea.reports" />
           </div>
@@ -221,7 +232,7 @@ const generateGuideBtnWrapper = ref(null);
 const generateGuideTextWrapper = ref(null);
 const isGenerating = ref(false);
 
-const marqueeContainer = ref(null); // Declare marqueeContainer ref
+const marqueeContainer = ref(null);
 
 const currentIdea = computed(() => {
   return props.ideas.length > 0 ? props.ideas[currentIndex.value] : null;
@@ -254,7 +265,7 @@ const animateCardIn = (direction) => {
   // Staggered mask animation for inner elements
   tl.fromTo(
     elementsToStagger,
-    { y: 50, opacity: 0 },
+    { y: 20, opacity: 0 },
     { y: 0, opacity: 1, stagger: 0.1 },
     "<0.2" // Start after card container animation
   );
@@ -262,9 +273,18 @@ const animateCardIn = (direction) => {
 };
 
 const startMarqueeAnimation = () => {
-  const imageHeight = 62; // Height of a single SVG image
-  const gapHeight = 38; // Gap between images
-  const singleSequenceHeight = 3 * imageHeight + 2 * gapHeight; // Height of one sequence (group1, group2, group3 + 2 gaps)
+  // Approximate height of one sequence block + gap
+  // Each block has 3 items. Each item is 64px (h-16) + 24px gap (gap-6) = 88px?
+  // Wait, flex-col gap-8 (32px).
+  // Item: h-16 (64px).
+  // 3 items + 2 gaps of 32px? No, the items themselves have gap-6 (24px) inside? No, the items are the rows.
+  // The container has `gap-8` (32px).
+  // Each row is `h-16` (64px).
+  // So one sequence of 3 items:
+  // Item 1 (64px) + Gap (32px) + Item 2 (64px) + Gap (32px) + Item 3 (64px) + Gap (32px) (to next sequence)
+  // Total height of one sequence = 3 * 64 + 3 * 32 = 192 + 96 = 288px.
+  
+  const singleSequenceHeight = 288; 
 
   if (marqueeContainer.value) {
     // Ensure the container starts at 0
@@ -278,9 +298,9 @@ const startMarqueeAnimation = () => {
 
     // Animate up by the height of one sequence
     tl.to(marqueeContainer.value, {
-      y: -(singleSequenceHeight + gapHeight), // Adjust target to include gapHeight at the end for seamless loop
-      duration: 8, // Adjust duration for desired speed
-      ease: "none", // Explicitly set ease to none here as well
+      y: -singleSequenceHeight, 
+      duration: 10, // Adjust duration for desired speed
+      ease: "none",
     });
   }
 };
@@ -354,8 +374,6 @@ const generateGuide = async () => {
 watch(
   currentIdea,
   (newIdea) => {
-    // The card animations are handled by the nextIdea/prevIdea functions.
-    // We just need to handle the marquee animation here.
     if (newIdea) {
       nextTick(() => {
         if (!newIdea.reports && marqueeContainer.value) {
@@ -365,7 +383,7 @@ watch(
     }
   },
   { deep: true }
-); // Deep watch for changes within the idea object if needed
+);
 
 // Initial animation when component is mounted and an idea is already present
 onMounted(() => {

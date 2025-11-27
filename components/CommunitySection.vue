@@ -1,6 +1,6 @@
 <template>
   <div class="w-full bg-light-tertiary-container rounded-[32px] p-8 md:p-12">
-    <h2 class="text-4xl font-brand text-light-on-tertiary-container mb-8">
+    <h2 class="text-6xl font-brand text-light-on-tertiary-container mb-8">
       From the Community
     </h2>
 
@@ -21,7 +21,7 @@
         v-for="(item, index) in displayItems"
         :key="index"
         @click="handleCardClick(item)"
-        class="bg-light-surface-container p-8 rounded-2xl flex flex-col justify-between h-[320px] hover:shadow-lg transition-all cursor-pointer border border-light-outline"
+        class="bg-light-surface-container p-8 rounded-xl flex flex-col justify-between h-[320px] hover:shadow-lg transition-all cursor-pointer border border-light-outline"
       >
         <p class="text-xl font-bold text-light-on-surface leading-tight">
           "{{ item.prompt }}"

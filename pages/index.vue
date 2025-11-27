@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-light-suface text-white flex flex-col">
+  <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
     <!-- Loading Overlay -->
     <div v-if="isLoading" class="fixed inset-0 bg-light-surface flex flex-col items-center justify-center z-50">
       <svg
@@ -26,7 +26,7 @@
     </div>
 
     <header class="py-6">
-      <div class="mx-auto max-w-[1440px] px-4 flex items-center justify-between">
+      <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>

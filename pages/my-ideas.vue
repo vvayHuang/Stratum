@@ -1,16 +1,15 @@
 <template>
   <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
     <header class="py-6">
-      <div class="mx-auto max-w-7xl px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
         <Navbar />
       </div>
     </header>
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
-      <div class="mx-auto max-w-7xl px-6 w-full py-10">
-        <div class="text-center mb-10">
-          <h1 class="text-5xl font-bold mb-2 font-brand italic">My Ideas</h1>
-          <p class="text-lg text-light-on-primary-container">Explore all the brilliant career ideas you've generated!</p>
+      <div class="mx-auto max-w-[1440px] px-6 w-full py-10">
+        <div class="mb-10">
+          <h1 class="text-5xl font-bold mb-2 font-brand">My Ideas</h1>
         </div>
 
         <div v-if="isLoading" class="text-center text-xl">Loading your ideas...</div>
@@ -21,18 +20,18 @@
             v-for="prompt in userPrompts"
             :key="prompt.id"
             :to="`/prompts/${prompt.id}`"
-            class="block bg-transparent p-6 rounded-lg border border-light-secondary-container hover:bg-background-hover-variable transition-colors cursor-pointer flex flex-col justify-between"
+            class="block bg-light-surface-container p-5 rounded-lg border border-light-outline hover:border-light-primary transition-colors cursor-pointer flex flex-col justify-between h-[229px]"
           >
             <div>
-              <h3 class="text-light-on-primary font-semibold text-xl mb-4">"{{ prompt.prompt }}"</h3>
-              <div v-if="prompt.ideas && prompt.ideas.length > 0" class="mb-4">
-                <p class="text-lg font-semibold text-light-tertiary">{{ prompt.ideas[0].title }}</p>
-                <p class="text-base text-light-on-primary-container line-clamp-2">{{ prompt.ideas[0].description }}</p>
-              </div>
+              <h3 class="text-light-on-surface-container font-brand text-xl leading-tight mb-4">“{{ prompt.prompt }}”</h3>
             </div>
-            <div class="flex justify-between items-center mt-4 pt-4 border-t border-light-secondary-container/50">
-              <span class="text-sm text-light-tertiary font-bold">{{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas</span>
-              <span class="text-sm opacity-80">{{ new Date(prompt.created_at).toLocaleDateString() }}</span>
+            <div class="flex justify-between items-end mt-4">
+              <span class="bg-light-primary-container text-light-on-primary-container text-sm font-bold px-3 py-1 rounded-md uppercase tracking-wide">
+                {{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas
+              </span>
+              <span class="text-lg font-bold text-light-on-surface-container opacity-80">
+                {{ new Date(prompt.created_at).toLocaleDateString('en-CA').replace(/-/g, '/') }}
+              </span>
             </div>
           </NuxtLink>
         </div>
