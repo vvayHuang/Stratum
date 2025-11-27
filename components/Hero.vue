@@ -9,7 +9,7 @@
             type="text"
             autocomplete="off"
             class="w-full h-20 px-4 py-3 bg-transparent rounded-lg outline-none text-l font-regular text-light-inverse-on-surface placeholder:text-light-inverse-on-surface placeholder:opacity-70"
-            placeholder="What is an interest or hobby that you enjoy?"
+            :placeholder="placeholderText"
           />
         </div>
         
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import gsap from "gsap";
 import HeroSuggestions from "./HeroSuggestions.vue";
 
@@ -63,6 +63,57 @@ const playHeroAnimation = () => {
 const resetAnimation = () => {
   gsap.set([heroContainer.value, descriptionText.value], { y: 0, autoAlpha: 1 });
 };
+
+// Placeholder Animation Logic
+const placeholderText = ref("");
+const phrases = [
+  "What is an interest or hobby that you enjoy?",
+  "I like reading romance novels",
+  "I enjoy hiking in the mountains",
+  "I want to learn pottery",
+  "I love baking sourdough bread",
+  "I'm interested in astrophotography"
+];
+
+let phraseIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typeTimeout = null;
+
+const typePlaceholder = () => {
+  const currentPhrase = phrases[phraseIndex];
+  
+  if (isDeleting) {
+    placeholderText.value = currentPhrase.substring(0, charIndex - 1);
+    charIndex--;
+  } else {
+    placeholderText.value = currentPhrase.substring(0, charIndex + 1);
+    charIndex++;
+  }
+
+  let typeSpeed = 50;
+
+  if (!isDeleting && charIndex === currentPhrase.length) {
+    // Finished typing phrase, pause before deleting
+    typeSpeed = 2000;
+    isDeleting = true;
+  } else if (isDeleting && charIndex === 0) {
+    // Finished deleting, move to next phrase
+    isDeleting = false;
+    phraseIndex = (phraseIndex + 1) % phrases.length;
+    typeSpeed = 500;
+  }
+
+  typeTimeout = setTimeout(typePlaceholder, typeSpeed);
+};
+
+onMounted(() => {
+  typePlaceholder();
+});
+
+onUnmounted(() => {
+  if (typeTimeout) clearTimeout(typeTimeout);
+});
 
 defineExpose({ playHeroAnimation, resetAnimation });
 </script>

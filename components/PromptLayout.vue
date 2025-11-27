@@ -2,7 +2,7 @@
   <div>
     <div class="text-light-on-primary max-w-[1440px] px-6 mx-auto">
       <div class="flex justify-center items-center mb-16 min-h-[60px]">
-        <div v-if="props.error" class="text-center">
+        <div v-if="false" class="text-center">
           <div class="inline-block bg-light-error-container/10 p-4 rounded-full mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-light-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -19,7 +19,7 @@
         </div>
         <p
           v-else-if="!isLoading"
-          class="text-center text-3xl font-brand text-light-on-surface"
+          class="text-center text-3xl font-brand text-light-on-surface italic"
         >
           “{{ prompt }}”
         </p>
@@ -30,29 +30,39 @@
     <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-[1440px] w-full px-6">
       <div
         v-if="isLoading && ideas.length === 0"
-        class="flex flex-col items-center justify-center"
+        class="container-centered w-full"
       >
-        <svg
-          class="animate-spin h-10 w-10 text-light-primary mb-4"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        <p class="text-light-on-surface text-xl font-semibold">Loading...</p>
+        <!-- Skeleton Navigation Buttons -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <div class="h-[52px] w-full md:w-[140px] rounded-md skeleton-shimmer"></div>
+          <div class="h-[52px] w-full md:w-[140px] rounded-md skeleton-shimmer"></div>
+        </div>
+
+        <!-- Skeleton Card -->
+        <div class="bg-secondary-35 rounded-[6px] p-8 md:p-16 relative overflow-hidden min-h-[600px]">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-full">
+              <!-- Label Skeleton -->
+              <div class="h-[28px] w-[120px] rounded-md mb-6 skeleton-shimmer"></div>
+
+              <!-- Title Skeleton -->
+              <div class="h-[56px] w-3/4 rounded-md mb-6 skeleton-shimmer"></div>
+            </div>
+          </div>
+
+          <!-- Description Skeleton -->
+          <div class="space-y-4 mb-16">
+            <div class="h-[20px] w-full rounded-md skeleton-shimmer"></div>
+            <div class="h-[20px] w-full rounded-md skeleton-shimmer"></div>
+            <div class="h-[20px] w-2/3 rounded-md skeleton-shimmer"></div>
+          </div>
+
+          <!-- Button Skeleton -->
+          <div class="h-[64px] w-full md:w-[240px] rounded-[4px] skeleton-shimmer"></div>
+          
+          <!-- Helper Text Skeleton -->
+           <div class="h-[24px] w-full md:w-[400px] rounded-md mt-6 mx-auto skeleton-shimmer"></div>
+        </div>
       </div>
 
       <div v-else-if="ideas.length > 0" class="container-centered w-full">
@@ -392,3 +402,28 @@ onMounted(() => {
   }
 });
 </script>
+
+<style scoped>
+.skeleton-shimmer {
+  background: #E3C0A7; /* secondary-80 from palette as base */
+  background-image: linear-gradient(
+    to right,
+    #E3C0A7 0%,
+    #FFDCC4 20%, /* secondary-90 highlight */
+    #E3C0A7 40%,
+    #E3C0A7 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%; 
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+</style>

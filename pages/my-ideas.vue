@@ -12,28 +12,57 @@
           <h1 class="text-5xl font-bold mb-2 font-brand">My Ideas</h1>
         </div>
 
-        <div v-if="isLoading" class="text-center text-xl">Loading your ideas...</div>
-        <div v-else-if="error" class="text-center text-xl text-light-error">Error: {{ error }}</div>
-        <div v-else-if="userPrompts.length === 0" class="text-center text-xl">You haven't generated any ideas yet.</div>
-        <div v-else ref="cardContainerRef" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <NuxtLink
-            v-for="prompt in userPrompts"
-            :key="prompt.id"
-            :to="`/prompts/${prompt.id}`"
-            class="block bg-light-surface-container p-5 rounded-lg border border-light-outline hover:border-light-primary transition-colors cursor-pointer flex flex-col justify-between h-[229px]"
-          >
+
+        <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="i in 8" :key="i" class="bg-light-surface-container p-5 rounded-lg border border-light-outline flex flex-col justify-between h-[229px]">
             <div>
-              <h3 class="text-light-on-surface-container font-brand text-xl leading-tight mb-4">“{{ prompt.prompt }}”</h3>
+              <!-- Prompt text skeleton -->
+              <div class="space-y-2 mb-4">
+                <div class="h-5 w-full rounded skeleton-shimmer"></div>
+                <div class="h-5 w-3/4 rounded skeleton-shimmer"></div>
+              </div>
             </div>
             <div class="flex justify-between items-end mt-4">
-              <span class="bg-light-primary-container text-light-on-primary-container text-sm font-bold px-3 py-1 rounded-md uppercase tracking-wide">
-                {{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas
-              </span>
-              <span class="text-lg font-bold text-light-on-surface-container opacity-80">
-                {{ new Date(prompt.created_at).toLocaleDateString('en-CA').replace(/-/g, '/') }}
-              </span>
+              <!-- Badge skeleton -->
+              <div class="h-7 w-20 rounded-md skeleton-shimmer"></div>
+              <!-- Date skeleton -->
+              <div class="h-6 w-24 rounded skeleton-shimmer"></div>
             </div>
-          </NuxtLink>
+          </div>
+        </div>
+        <div v-else-if="error" class="text-center text-xl text-light-error">Error: {{ error }}</div>
+        <div v-else-if="userPrompts.length === 0" class="text-center text-xl">You haven't generated any ideas yet.</div>
+        <div v-else>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <NuxtLink
+              v-for="prompt in displayedPrompts"
+              :key="prompt.id"
+              :to="`/prompts/${prompt.id}`"
+              class="block bg-light-surface-container p-5 rounded-lg border border-light-outline hover:border-light-primary transition-colors cursor-pointer flex flex-col justify-between h-[229px]"
+            >
+              <div>
+                <h3 class="text-light-on-surface-container font-brand text-xl leading-tight mb-4">"{{ prompt.prompt }}"</h3>
+              </div>
+              <div class="flex justify-between items-end mt-4">
+                <span class="bg-light-primary-container text-light-on-primary-container text-sm font-bold px-3 py-1 rounded-md uppercase tracking-wide">
+                  {{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas
+                </span>
+                <span class="text-lg font-bold text-light-on-surface-container opacity-80">
+                  {{ new Date(prompt.created_at).toLocaleDateString('en-CA').replace(/-/g, '/') }}
+                </span>
+              </div>
+            </NuxtLink>
+          </div>
+          
+          <!-- Show More Button -->
+          <div v-if="userPrompts.length > displayLimit" class="flex justify-center mt-8">
+            <button
+              @click="showMore"
+              class="bg-light-primary text-light-on-primary font-bold px-8 py-3 rounded-md text-lg hover:opacity-90 transition-opacity"
+            >
+              Show More
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -43,9 +72,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
-import gsap from 'gsap';
 import Navbar from '~/components/Navbar.vue';
 import LoginModal from '~/components/LoginModal.vue'; // Assuming LoginModal is still needed for some reason, though not directly used here.
 
@@ -59,7 +87,15 @@ const supabase = useSupabaseClient();
 const userPrompts = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
-const cardContainerRef = ref(null); // Ref for the grid container
+const displayLimit = ref(8);
+
+const displayedPrompts = computed(() => {
+  return userPrompts.value.slice(0, displayLimit.value);
+});
+
+const showMore = () => {
+  displayLimit.value += 8;
+};
 
 const fetchUserPrompts = async () => {
   console.log('fetchUserPrompts called. user.value:', user.value);
@@ -101,19 +137,7 @@ const fetchUserPrompts = async () => {
   }
 };
 
-watch(userPrompts, (newPrompts) => {
-  if (newPrompts.length > 0) {
-    nextTick(() => {
-      if (cardContainerRef.value) {
-        gsap.fromTo(
-          cardContainerRef.value.children,
-          { opacity: 0, y: 50 }, // From these properties
-          { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power2.out' } // To these properties
-        );
-      }
-    });
-  }
-});
+
 
 watch(user, (newUser) => {
   console.log('User watch triggered. newUser:', newUser);
@@ -125,3 +149,28 @@ watch(user, (newUser) => {
   }
 }, { immediate: true }); // immediate: true to run once on component setup if user is already available
 </script>
+
+<style scoped>
+.skeleton-shimmer {
+  background: #E3C0A7; /* secondary-80 from palette as base */
+  background-image: linear-gradient(
+    to right,
+    #E3C0A7 0%,
+    #FFDCC4 20%, /* secondary-90 highlight */
+    #E3C0A7 40%,
+    #E3C0A7 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%; 
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+</style>
