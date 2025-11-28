@@ -87,7 +87,8 @@ const { data: recentPrompts, error: fetchError } = await useAsyncData('public-pr
       id,
       prompt,
       created_at,
-      ideas:ideas(count)
+      ideas:ideas(count),
+      user:users(full_name, avatar_url)
     `)
     .order('created_at', { ascending: false })
     .limit(200);
@@ -101,6 +102,8 @@ const { data: recentPrompts, error: fetchError } = await useAsyncData('public-pr
     prompt: p.prompt,
     created_at: p.created_at,
     ideas_count: Array.isArray(p.ideas) ? p.ideas.length : 0,
+    author: p.user?.full_name || 'Anonymous',
+    avatar: p.user?.avatar_url,
   })) || [];
 }, {
   default: () => []
