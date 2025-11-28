@@ -1,29 +1,7 @@
 <template>
   <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
-    <!-- Loading Overlay -->
-    <div v-if="isLoading" class="fixed inset-0 bg-light-surface flex flex-col items-center justify-center z-50">
-      <svg
-        class="animate-spin h-10 w-10 text-white mb-4"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        ></circle>
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
-      <p class="text-white text-xl font-semibold">Loading...</p>
-    </div>
+    <!-- Loading Overlay Removed -->
+    <!-- <div v-if="isLoading" class="fixed inset-0 bg-light-surface flex flex-col items-center justify-center z-50"> ... </div> -->
 
     <header class="py-6">
       <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
@@ -34,16 +12,18 @@
     <main class="flex-grow flex flex-col overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div class="mx-auto max-w-3xl py-64 w-full overflow-hidden">
-          <Hero ref="heroComponent" @show-money="handleShowMoney" />
+        <div class="mx-auto py-64 w-full overflow-hidden" :class="isLoading ? 'max-w-[1440px]' : 'max-w-3xl'">
+          <Hero ref="heroComponent" :isLoading="isLoading" @show-money="handleShowMoney" />
         </div>
       </div>
       
       
       <div class="mx-auto max-w-[1440px] px-4 w-full mt-12 mb-20">
         <CommunitySection 
+          ref="communitySection"
           :prompts="recentPrompts"
-          @prompt-click="(promptText, promptId) => navigateTo(`/prompts/${promptId}`)"
+          :isLoading="isFetchingPrompts"
+          @prompt-click="(promptText, promptId) => router.push(`/prompts/${promptId}`)"
         />
       </div>
 
@@ -60,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import { navigateTo } from '#app';
+import { useRouter } from 'vue-router'; // Import useRouter
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import gsap from "gsap";
 import Navbar from "~/components/Navbar.vue";
@@ -72,46 +52,52 @@ import LoginModal from "~/components/LoginModal.vue";
 import type { Database } from '~/types/database.types';
 
 const user = useSupabaseUser();
+const router = useRouter(); // Initialize router
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
+const communitySection = ref(null);
 const loginModal = ref(null);
 const isLoading = ref(false);
 
-const { data: recentPrompts, error: fetchError } = await useAsyncData('public-prompts', async () => {
-  const supabase = useSupabaseClient<Database>();
-  
-  // Fetch prompts with created_at and count of ideas
-  const { data: prompts, error: promptsError } = await supabase
-    .from('prompts')
-    .select(`
-      id,
-      prompt,
-      created_at,
-      ideas:ideas(count),
-      user:users(full_name, avatar_url)
-    `)
-    .order('created_at', { ascending: false })
-    .limit(200);
-  
-  if (promptsError) throw promptsError;
-  if (!prompts || prompts.length === 0) return [];
+const recentPrompts = ref([]);
+const fetchError = ref(null);
+const isFetchingPrompts = ref(true);
 
-  // Map to final structure with ideas count
-  return prompts.map(p => ({
-    id: p.id,
-    prompt: p.prompt,
-    created_at: p.created_at,
-    ideas_count: Array.isArray(p.ideas) ? p.ideas.length : 0,
-    author: p.user?.full_name || 'Anonymous',
-    avatar: p.user?.avatar_url,
-  })) || [];
-}, {
-  default: () => []
+onMounted(async () => {
+  try {
+    const supabase = useSupabaseClient<Database>();
+    
+    const { data: prompts, error: promptsError } = await supabase
+      .from('prompts')
+      .select(`
+        id,
+        prompt,
+        created_at,
+        ideas:ideas(count),
+        user:users(full_name, avatar_url)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(200);
+    
+    if (promptsError) throw promptsError;
+
+    if (prompts && prompts.length > 0) {
+      recentPrompts.value = prompts.map(p => ({
+        id: p.id,
+        prompt: p.prompt,
+        created_at: p.created_at,
+        ideas_count: Array.isArray(p.ideas) ? p.ideas.length : (p.ideas?.count || 0),
+        author: p.user?.full_name || 'Anonymous',
+        avatar: p.user?.avatar_url,
+      }));
+    }
+  } catch (e) {
+    console.error("Failed to fetch public prompts:", e);
+    fetchError.value = e;
+  } finally {
+    isFetchingPrompts.value = false;
+  }
 });
-
-if (fetchError.value) {
-  console.error("Failed to fetch public prompts for cards:", fetchError.value);
-}
 
 watchEffect(() => {
   if (user.value && loginModal.value) {
@@ -120,19 +106,27 @@ watchEffect(() => {
 });
 
 const handleShowMoney = async (p) => {
-  isLoading.value = true;
   console.log("handleShowMoney called!");
 
   const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
-  const cardsAnim = cardsComponent.value ? cardsComponent.value.playCardsAnimation() : null;
+  const communityAnim = communitySection.value ? communitySection.value.animateOut() : null;
+  // const cardsAnim = cardsComponent.value ? cardsComponent.value.playCardsAnimation() : null;
 
   try {
+    // Wait for animations to complete before showing skeleton (isLoading = true)
     await Promise.all([
       heroAnim ? heroAnim : Promise.resolve(),
-      cardsAnim ? cardsAnim : Promise.resolve(),
+      communityAnim ? communityAnim : Promise.resolve(),
+      // cardsAnim ? cardsAnim : Promise.resolve(),
     ]);
+    
+    isLoading.value = true; // Show skeleton now
 
     let apiBody = { prompt: p };
+
+    // Add timeout for fetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
     const res = await fetch("/api/gemini", {
       method: "POST",
@@ -140,7 +134,10 @@ const handleShowMoney = async (p) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(apiBody),
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       console.error("Fetch response not OK:", res);
@@ -149,20 +146,33 @@ const handleShowMoney = async (p) => {
     }
 
     const data = await res.json();
+    console.log("API Response:", data); // Debug log
+
     if (data.error) {
       throw new Error(data.error);
     }
-    const newPromptId = data.promptId; // Assuming promptId is returned from API
+    const newPromptId = data.promptId; 
 
     if (newPromptId) {
-      navigateTo(`/prompts/${newPromptId}`);
+      console.log("Navigating to:", `/prompts/${newPromptId}`);
+      try {
+        await router.push(`/prompts/${newPromptId}`);
+      } catch (navError) {
+        console.error("Router push failed, falling back to window.location:", navError);
+        window.location.href = `/prompts/${newPromptId}`;
+      }
+    } else {
+      console.error("No promptId returned from API");
+      isLoading.value = false;
     }
 
   } catch (e) {
     console.error("Error in handleShowMoney:", e);
     // If something fails, reset the loading state so the user isn't stuck
     isLoading.value = false;
+    // Optionally show an error message to the user
+    alert("An error occurred: " + e.message);
   }
 };
 </script>
-
+```

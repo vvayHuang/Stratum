@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-light-tertiary-container rounded-[32px] p-8 md:p-12">
+  <div ref="container" class="w-full bg-light-tertiary-container rounded-[32px] p-8 md:p-12">
     <h2 class="text-6xl font-brand text-light-on-tertiary-container mb-8">
       From the Community
     </h2>
@@ -17,7 +17,29 @@
 
     <!-- Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <!-- Skeleton Cards -->
       <div
+        v-if="isLoading"
+        v-for="n in 16"
+        :key="'skeleton-' + n"
+        class="relative p-4 rounded-lg flex flex-col justify-between h-[229px] border border-light-outline overflow-hidden bg-light-surface-container"
+      >
+        <div class="relative z-10 space-y-3">
+          <div class="skeleton-shimmer h-6 w-full rounded"></div>
+          <div class="skeleton-shimmer h-6 w-4/5 rounded"></div>
+          <div class="skeleton-shimmer h-6 w-3/4 rounded"></div>
+        </div>
+        <div class="relative z-10 flex items-center gap-3 mt-auto">
+          <div class="skeleton-shimmer w-8 h-8 rounded-full"></div>
+          <div class="flex-1 space-y-2">
+            <div class="skeleton-shimmer h-4 w-20 rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actual Cards -->
+      <div
+        v-else
         v-for="(item, index) in displayItems"
         :key="index"
         @click="handleCardClick(item)"
@@ -69,11 +91,18 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import gsap from 'gsap';
+
+const container = ref(null);
 
 const props = defineProps({
   prompts: {
     type: Array,
     default: () => [],
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -128,4 +157,45 @@ const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-CA').replace(/-/g, '/');
 };
+
+const animateOut = () => {
+  if (!container.value) return Promise.resolve();
+  
+  const tl = gsap.timeline();
+  tl.to(container.value, { 
+    y: 100, 
+    autoAlpha: 0, 
+    duration: 0.5, 
+    ease: "power2.in" 
+  });
+  return tl;
+};
+
+
+defineExpose({ animateOut });
 </script>
+
+<style scoped>
+.skeleton-shimmer {
+  background: #E3C0A7; /* secondary-80 from palette as base */
+  background-image: linear-gradient(
+    to right,
+    #E3C0A7 0%,
+    #FFDCC4 20%, /* secondary-90 highlight */
+    #E3C0A7 40%,
+    #E3C0A7 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%; 
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+</style>

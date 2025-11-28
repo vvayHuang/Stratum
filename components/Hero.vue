@@ -24,9 +24,49 @@
         </button>
       </div>
     </div>
-    <p v-if="!isLoading" ref="descriptionText" class="mt-4 text-base opacity-80 text-light-on-primary">
-      "I like reading romance novels"
-    </p>
+
+    <!-- Skeleton Loader -->
+    <div v-else class="w-full max-w-[1440px] mx-auto">
+      <!-- Skeleton Navigation Buttons (Hidden/Placeholder to match layout if needed, but here we just want the card) -->
+      <!-- Actually, PromptLayout has buttons above the card. Hero is just the input. 
+           The user asked for "same effect as PromptLayout". PromptLayout has a big card skeleton.
+           Hero is usually smaller, but maybe we want to transition TO the big card skeleton?
+           The user said "waiting for gemini... loading screen... like PromptLayout".
+           So we should probably show the big card skeleton here to make the transition seamless.
+      -->
+       <div class="container-centered w-full">
+        <!-- Skeleton Navigation Buttons -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 opacity-0"> <!-- Hidden but taking space if we want exact match, or just omit -->
+           <!-- Omitted for now as Hero doesn't have nav buttons usually, but let's stick to the card -->
+        </div>
+
+        <!-- Skeleton Card -->
+        <div class="bg-secondary-35 rounded-[6px] p-8 md:p-16 relative overflow-hidden min-h-[600px] w-full ">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-full">
+              <!-- Label Skeleton -->
+              <div class="h-[28px] w-[120px] rounded-md mb-6 skeleton-shimmer"></div>
+
+              <!-- Title Skeleton -->
+              <div class="h-[56px] w-3/4 rounded-md mb-6 skeleton-shimmer"></div>
+            </div>
+          </div>
+
+          <!-- Description Skeleton -->
+          <div class="space-y-4 mb-16">
+            <div class="h-[20px] w-full rounded-md skeleton-shimmer"></div>
+            <div class="h-[20px] w-full rounded-md skeleton-shimmer"></div>
+            <div class="h-[20px] w-2/3 rounded-md skeleton-shimmer"></div>
+          </div>
+
+          <!-- Button Skeleton -->
+          <div class="h-[64px] w-full md:w-[240px] rounded-[4px] skeleton-shimmer"></div>
+          
+          <!-- Helper Text Skeleton -->
+           <div class="h-[24px] w-full md:w-[400px] rounded-md mt-6 mx-auto skeleton-shimmer"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -119,5 +159,26 @@ defineExpose({ playHeroAnimation, resetAnimation });
 </script>
 
 <style scoped>
-/* Scoped styles can be removed as they are no longer used. */
+.skeleton-shimmer {
+  background: #E3C0A7; /* secondary-80 from palette as base */
+  background-image: linear-gradient(
+    to right,
+    #E3C0A7 0%,
+    #FFDCC4 20%, /* secondary-90 highlight */
+    #E3C0A7 40%,
+    #E3C0A7 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%; 
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
 </style>

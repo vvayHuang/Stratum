@@ -80,6 +80,7 @@
     </main>
 
     <LoginModal ref="loginModal" />
+    <DeleteConfirmationModal ref="deleteModal" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -87,7 +88,8 @@
 import { ref, computed, watch } from 'vue';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import Navbar from '~/components/Navbar.vue';
-import LoginModal from '~/components/LoginModal.vue'; // Assuming LoginModal is still needed for some reason, though not directly used here.
+import LoginModal from '~/components/LoginModal.vue';
+import DeleteConfirmationModal from '~/components/DeleteConfirmationModal.vue';
 
 definePageMeta({
   middleware: ['auth'] // Protect this route
@@ -100,6 +102,8 @@ const userPrompts = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 const displayLimit = ref(16);
+const deleteModal = ref(null);
+const promptToDeleteId = ref(null);
 
 const displayedPrompts = computed(() => {
   return userPrompts.value.slice(0, displayLimit.value);
@@ -180,8 +184,30 @@ const formatTimeAgo = (dateString) => {
 };
 
 const deletePrompt = (id) => {
-  console.log('Delete prompt:', id);
-  // TODO: Implement delete functionality
+  promptToDeleteId.value = id;
+  deleteModal.value.openModal();
+};
+
+const confirmDelete = async () => {
+  if (!promptToDeleteId.value) return;
+
+  try {
+    const { error: deleteError } = await supabase
+      .from('prompts')
+      .delete()
+      .eq('id', promptToDeleteId.value);
+
+    if (deleteError) throw deleteError;
+
+    // Remove from local state
+    userPrompts.value = userPrompts.value.filter(p => p.id !== promptToDeleteId.value);
+    
+    // Reset state
+    promptToDeleteId.value = null;
+  } catch (e) {
+    console.error('Error deleting prompt:', e);
+    // Optionally show an error toast here
+  }
 };
 </script>
 
