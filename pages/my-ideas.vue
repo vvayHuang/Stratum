@@ -13,45 +13,57 @@
         </div>
 
 
-        <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="i in 8" :key="i" class="bg-light-surface-container p-5 rounded-lg border border-light-outline flex flex-col justify-between h-[229px]">
+        <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div v-for="i in 16" :key="i" class="bg-light-surface-container-low p-6 rounded-xl border border-light-outline flex flex-col justify-between h-[229px] relative">
             <div>
               <!-- Prompt text skeleton -->
-              <div class="space-y-2 mb-4">
-                <div class="h-5 w-full rounded skeleton-shimmer"></div>
-                <div class="h-5 w-3/4 rounded skeleton-shimmer"></div>
+              <div class="space-y-3 mb-4">
+                <div class="h-8 w-full rounded skeleton-shimmer"></div>
+                <div class="h-8 w-5/6 rounded skeleton-shimmer"></div>
+                <div class="h-8 w-4/6 rounded skeleton-shimmer"></div>
               </div>
             </div>
-            <div class="flex justify-between items-end mt-4">
-              <!-- Badge skeleton -->
-              <div class="h-7 w-20 rounded-md skeleton-shimmer"></div>
+            <div class="flex items-center gap-2 mt-4">
+              <!-- Clock icon skeleton -->
+              <div class="h-5 w-5 rounded-full skeleton-shimmer"></div>
               <!-- Date skeleton -->
-              <div class="h-6 w-24 rounded skeleton-shimmer"></div>
+              <div class="h-5 w-32 rounded skeleton-shimmer"></div>
             </div>
           </div>
         </div>
         <div v-else-if="error" class="text-center text-xl text-light-error">Error: {{ error }}</div>
         <div v-else-if="userPrompts.length === 0" class="text-center text-xl">You haven't generated any ideas yet.</div>
         <div v-else>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <NuxtLink
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div
               v-for="prompt in displayedPrompts"
               :key="prompt.id"
-              :to="`/prompts/${prompt.id}`"
-              class="block bg-light-surface-container p-5 rounded-lg border border-light-outline hover:border-light-primary transition-colors cursor-pointer flex flex-col justify-between h-[229px]"
+              class="group relative bg-light-surface-container-low p-4 rounded-xl border border-light-outline flex flex-col justify-between h-[229px] transition-colors overflow-hidden"
             >
-              <div>
-                <h3 class="text-light-on-surface-container font-brand text-xl leading-tight mb-4">"{{ prompt.prompt }}"</h3>
-              </div>
-              <div class="flex justify-between items-end mt-4">
-                <span class="bg-light-primary-container text-light-on-primary-container text-sm font-bold px-3 py-1 rounded-md uppercase tracking-wide">
-                  {{ prompt.ideas ? prompt.ideas.length : 0 }} Ideas
-                </span>
-                <span class="text-lg font-bold text-light-on-surface-container opacity-80">
-                  {{ new Date(prompt.created_at).toLocaleDateString('en-CA').replace(/-/g, '/') }}
-                </span>
-              </div>
-            </NuxtLink>
+              <!-- Delete Button (Hover) -->
+              <button 
+                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-light-on-surface/10 hover:bg-light-on-surface/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                @click.stop.prevent="deletePrompt(prompt.id)"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-light-on-surface" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <NuxtLink :to="`/prompts/${prompt.id}`" class="flex-grow flex flex-col justify-between">
+                <div>
+                  <h3 class="text-light-on-surface font-brand text-2xl leading-tight mb-4">“{{ prompt.prompt }}”</h3>
+                </div>
+                <div class="flex items-center gap-2 mt-4 text-light-on-surface-variant">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="text-m font-medium">
+                    Edited {{ formatTimeAgo(prompt.created_at) }}
+                  </span>
+                </div>
+              </NuxtLink>
+            </div>
           </div>
           
           <!-- Show More Button -->
@@ -87,14 +99,14 @@ const supabase = useSupabaseClient();
 const userPrompts = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
-const displayLimit = ref(8);
+const displayLimit = ref(16);
 
 const displayedPrompts = computed(() => {
   return userPrompts.value.slice(0, displayLimit.value);
 });
 
 const showMore = () => {
-  displayLimit.value += 8;
+  displayLimit.value += 16;
 };
 
 const fetchUserPrompts = async () => {
@@ -148,6 +160,29 @@ watch(user, (newUser) => {
     isLoading.value = false; // Ensure isLoading is false if user is not logged in
   }
 }, { immediate: true }); // immediate: true to run once on component setup if user is already available
+
+const formatTimeAgo = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+
+  if (diffInSeconds < 60) return 'Just now';
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+  const diffInYears = Math.floor(diffInDays / 365);
+  return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+};
+
+const deletePrompt = (id) => {
+  console.log('Delete prompt:', id);
+  // TODO: Implement delete functionality
+};
 </script>
 
 <style scoped>
