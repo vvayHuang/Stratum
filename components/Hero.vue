@@ -1,27 +1,33 @@
 <template>
   <div>
-    <div v-if="!isLoading" ref="heroContainer" class="p-4 rounded-3xl bg-light-inverse-surface">
-      <div class="flex flex-col items-end gap-3">
-        <div class="relative w-full">
+    <div v-if="!isLoading" ref="heroContainer" class="w-full h-[calc(100vh-80px)] flex flex-col justify-center items-center custom-gradient">
+      <div class="flex flex-col items-center gap-8 w-full max-w-[800px] px-4">
+        <h1 class="font-brand text-4xl leading-3xl text-light-on-secondary-container text-center">
+          Dive In: Discover Your Next Big Idea!
+        </h1>
+        
+        <div class="w-full bg-light-inverse-surface rounded-3xl p-4 relative min-h-[172px] flex flex-col justify-between">
           <input
             id="hobby-input"
             v-model="inputValue"
             type="text"
             autocomplete="off"
-            class="w-full h-20 px-4 py-3 bg-transparent rounded-lg outline-none text-l font-regular text-light-inverse-on-surface placeholder:text-light-inverse-on-surface placeholder:opacity-70"
+            class="w-full h-auto bg-transparent outline-none text-l font-regular text-light-inverse-on-surface placeholder:text-light-inverse-on-surface placeholder:opacity-70 resize-none p-2"
             :placeholder="placeholderText"
           />
+          
+          <div class="flex justify-end">
+            <button
+              @click="handleClick"
+              :disabled="inputValue.trim() === ''"
+              class="flex items-center justify-center w-12 h-12 transition-colors bg-light-primary rounded-full disabled:bg-light-primary-50 disabled:cursor-not-allowed"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4L10.59 5.41L16.17 11H4V13H16.17L10.59 18.59L12 20L20 12L12 4Z" fill="white"/>
+              </svg>
+            </button>
+          </div>
         </div>
-        
-        <HeroSuggestions @select="handleSuggestionSelect" />
-
-        <button
-          @click="handleClick"
-          :disabled="inputValue.trim() === ''"
-          class="flex items-center justify-center w-full gap-3 px-4 transition-colors bg-light-primary md:w-auto h-12 rounded-full disabled:bg-light-primary-50 disabled:cursor-not-allowed"
-        >
-          <span class="font-medium text-m text-light-on-primary">Give me some shit</span>
-        </button>
       </div>
     </div>
 
@@ -34,9 +40,14 @@
            The user said "waiting for gemini... loading screen... like PromptLayout".
            So we should probably show the big card skeleton here to make the transition seamless.
       -->
-       <div class="container-centered w-full">
+       <div class="container-centered w-full flex flex-col items-center">
+        <!-- Prompt Text with Shimmer -->
+        <h2 class="text-3xl font-brand italic text-center mb-12 text-shimmer max-w-4xl leading-normal">
+          “{{ inputValue }}”
+        </h2>
+
         <!-- Skeleton Navigation Buttons -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 opacity-0"> <!-- Hidden but taking space if we want exact match, or just omit -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 w-full opacity-0"> <!-- Hidden but taking space -->
            <!-- Omitted for now as Hero doesn't have nav buttons usually, but let's stick to the card -->
         </div>
 
@@ -73,10 +84,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import gsap from "gsap";
-import HeroSuggestions from "./HeroSuggestions.vue";
 
 const heroContainer = ref(null);
-const descriptionText = ref(null);
 
 const props = defineProps({
   isLoading: Boolean,
@@ -89,19 +98,20 @@ const handleClick = () => {
   emit("show-money", inputValue.value);
 };
 
-const handleSuggestionSelect = (text) => {
-  inputValue.value = text;
-};
+
 
 const playHeroAnimation = () => {
   const tl = gsap.timeline();
-  tl.to(heroContainer.value, { y: 100, autoAlpha: 0, duration: 0.5 });
-  tl.to(descriptionText.value, { autoAlpha: 0, duration: 0.5 }, "<");
+  if (heroContainer.value) {
+    tl.to(heroContainer.value, { y: 100, autoAlpha: 0, duration: 0.5 });
+  }
   return tl;
 };
 
 const resetAnimation = () => {
-  gsap.set([heroContainer.value, descriptionText.value], { y: 0, autoAlpha: 1 });
+  if (heroContainer.value) {
+    gsap.set(heroContainer.value, { y: 0, autoAlpha: 1 });
+  }
 };
 
 // Placeholder Animation Logic
@@ -173,6 +183,21 @@ defineExpose({ playHeroAnimation, resetAnimation });
   animation: shimmer 1.5s infinite linear;
 }
 
+.text-shimmer {
+  background: linear-gradient(
+    to right,
+    #221A14 0%,
+    #89511F 20%,
+    #221A14 40%,
+    #221A14 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
 @keyframes shimmer {
   0% {
     background-position: 100% 0;
@@ -180,5 +205,15 @@ defineExpose({ playHeroAnimation, resetAnimation });
   100% {
     background-position: -100% 0;
   }
+}
+
+.custom-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 183, 128, 1) 50%, /* primary-80 #FFB780 */
+    rgba(198, 165, 142, 1) 75%, /* secondary-70 #C6A58E */
+    rgba(144, 148, 101, 1) 100% /* tertiary-60 #909465 */
+  );
 }
 </style>

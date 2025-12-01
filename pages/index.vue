@@ -3,7 +3,7 @@
     <!-- Loading Overlay Removed -->
     <!-- <div v-if="isLoading" class="fixed inset-0 bg-light-surface flex flex-col items-center justify-center z-50"> ... </div> -->
 
-    <header class="py-6">
+    <header class="sticky top-0 z-50 bg-light-surface/80 backdrop-blur-md border-light-outline-variant">
       <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
@@ -12,13 +12,13 @@
     <main class="flex-grow flex flex-col overflow-hidden">
       <div class="flex-grow flex items-center justify-center">
         <!-- Hero component, only shown when not loading and no ideas -->
-        <div class="mx-auto py-64 w-full overflow-hidden" :class="isLoading ? 'max-w-[1440px]' : 'max-w-3xl'">
+        <div class="mx-auto w-full overflow-hidden">
           <Hero ref="heroComponent" :isLoading="isLoading" @show-money="handleShowMoney" />
         </div>
       </div>
       
       
-      <div class="mx-auto max-w-[1440px] px-4 w-full mt-12 mb-20">
+      <div class="mx-auto max-w-[1440px] px-4 w-full my-20">
         <CommunitySection 
           ref="communitySection"
           :prompts="recentPrompts"

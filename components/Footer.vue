@@ -1,8 +1,8 @@
 <template>
-  <div class="relative w-full overflow-hidden rounded-t-[24px] h-[845px] flex flex-col justify-between p-8 md:p-12">
+  <div class="relative w-full overflow-hidden h-[845px] flex flex-col justify-between p-8 md:p-12">
     <!-- Background Image -->
     <img
-      src="~/assets/background-Image.png"
+      :src="backgroundImage"
       alt="Footer Background"
       class="absolute inset-0 w-full h-full object-cover object-top z-0"
     />
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-// No script logic needed for this static footer
+import backgroundImage from '~/assets/background-Image.png';
 </script>
 
 <style scoped>

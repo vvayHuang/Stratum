@@ -1,18 +1,10 @@
 <template>
-  <div ref="container" class="w-full bg-light-tertiary-container rounded-[32px] p-8 md:p-12">
-    <h2 class="text-6xl font-brand text-light-on-tertiary-container mb-8">
-      From the Community
-    </h2>
-
-    <!-- Filters -->
-    <div class="flex flex-wrap gap-3 mb-10">
-      <button
-        v-for="filter in filters"
-        :key="filter"
-        class="px-4 py-2 rounded-full border border-light-outline/20 bg-light-surface/30 text-sm font-medium text-light-on-surface-variant hover:bg-light-surface/50 transition-colors"
-      >
-        {{ filter }}
-      </button>
+  <div ref="container" class="w-full bg-light-surface p-8 md:p-0">
+    <div class="flex justify-between items-end mb-8">
+      <h2 class="text-6xl font-brand text-light-on-surface">
+        From the Community
+      </h2>
+      <a href="#" class="text-light-primary font-medium hover:underline mb-2">View all</a>
     </div>
 
     <!-- Grid -->
@@ -108,17 +100,7 @@ const props = defineProps({
 
 const emit = defineEmits(['prompt-click']);
 
-const filters = [
-  "Brainstorming",
-  "Concept Development",
-  "User Research",
-  "Market Analysis",
-  "Prototype Testing",
-  "Feedback Gathering",
-  "Iterative Design",
-  "Feature Prioritization",
-  "Final Presentation",
-];
+
 
 // Pagination state
 const visibleCount = ref(16);

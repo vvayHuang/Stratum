@@ -18,6 +18,45 @@ export default defineEventHandler(async (event) => {
   const genAI = new GoogleGenerativeAI(config.geminiApiKey);
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
+  // Helper function to extract JSON from text
+  const extractJson = (text) => {
+    try {
+      // First, try to parse the text directly
+      return JSON.parse(text);
+    } catch (e) {
+      // If that fails, try to find a JSON block
+      const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        try {
+          return JSON.parse(jsonMatch[1]);
+        } catch (e2) {
+          // Continue to next attempt
+        }
+      }
+
+      // Try to find array or object start/end
+      const arrayMatch = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
+      if (arrayMatch) {
+        try {
+          return JSON.parse(arrayMatch[0]);
+        } catch (e3) {
+          // Continue
+        }
+      }
+
+      const objectMatch = text.match(/\{[\s\S]*\}/);
+      if (objectMatch) {
+        try {
+          return JSON.parse(objectMatch[0]);
+        } catch (e4) {
+          // Continue
+        }
+      }
+
+      throw new Error('Could not extract valid JSON from response');
+    }
+  };
+
   if (generateGuide) {
     // Logic for generating the guide
     const guidePrompt = `You are a career advice expert. For the idea titled "${idea.title}" with the description "${idea.description}", provide a detailed guide. Your response must be a JSON object with the following structure: {"earnings_potential": "a string representing a range, e.g., $500-$2k", "competitive_score": a number from 0 to 10, "steps": [{"title": "Step 1 Title", "description": "Step 1 Description"}, ...]}. The guide should have between 5 and 10 steps. Do not include any other text or formatting in your response, just the JSON object.`;
@@ -25,16 +64,16 @@ export default defineEventHandler(async (event) => {
     try {
       const result = await model.generateContent(guidePrompt);
       const response = await result.response;
-      let text = response.text();
+      const text = response.text();
 
-      // Clean the response to ensure it's valid JSON
-      if (text.startsWith('```json')) {
-        text = text.substring(7, text.length - 3).trim();
-      } else if (text.startsWith('```')) {
-        text = text.substring(3, text.length - 3).trim();
+      let guideData;
+      try {
+        guideData = extractJson(text);
+      } catch (parseError) {
+        console.error('JSON Parse Error for Guide Generation:', parseError);
+        console.error('Raw Text:', text);
+        throw new Error('Failed to parse JSON response from Gemini.');
       }
-
-      const guideData = JSON.parse(text);
 
       // Step 1: Create a new report
       const { data: report, error: reportError } = await adminSupabase
@@ -80,7 +119,7 @@ export default defineEventHandler(async (event) => {
         `)
         .eq('id', reportId)
         .single();
-      
+
       if (finalReportError) {
         console.error('Supabase final report fetch error:', finalReportError);
         throw new Error('Failed to fetch final report.');
@@ -93,7 +132,7 @@ export default defineEventHandler(async (event) => {
       console.error('Error processing guide generation request:', error);
       event.node.res.statusCode = 500;
       return {
-        error: 'Failed to fetch from Gemini API or save data.',
+        error: error.message || 'Failed to fetch from Gemini API or save data.',
       };
     }
   } else if (fetchIdeasByPrompt) {
@@ -159,16 +198,16 @@ export default defineEventHandler(async (event) => {
     try {
       const result = await chat.sendMessage(prompt);
       const response = await result.response;
-      let text = response.text();
+      const text = response.text();
 
-      // Clean the response to ensure it's valid JSON
-      if (text.startsWith('```json')) {
-        text = text.substring(7, text.length - 3).trim();
-      } else if (text.startsWith('```')) {
-        text = text.substring(3, text.length - 3).trim();
+      let ideas;
+      try {
+        ideas = extractJson(text);
+      } catch (parseError) {
+        console.error('JSON Parse Error for Ideas Generation:', parseError);
+        console.error('Raw Text:', text);
+        throw new Error('Failed to parse JSON response from Gemini.');
       }
-
-      const ideas = JSON.parse(text);
 
       const { data: promptData, error: promptError } = await adminSupabase
         .from('prompts')
@@ -217,7 +256,7 @@ export default defineEventHandler(async (event) => {
       }
       event.node.res.statusCode = 500;
       return {
-        error: 'Failed to fetch from Gemini API or save data.',
+        error: error.message || 'Failed to fetch from Gemini API or save data.',
       };
     }
   }
