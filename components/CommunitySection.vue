@@ -1,10 +1,13 @@
 <template>
-  <div ref="container" class="w-full bg-light-surface p-8 md:p-0">
-    <div class="flex justify-between items-end mb-8">
-      <h2 class="text-6xl font-brand text-light-on-surface">
+  <div ref="container" class="w-full bg-light-surface">
+    <div class="flex justify-between lg:items-end mb-8">
+      <h2 class="text-3xl lg:text-6xl font-brand text-light-on-surface">
         From the Community
       </h2>
-      <a href="#" class="text-light-primary font-medium hover:underline mb-2">View all</a>
+      <a href="#" class="text-light-primary font-medium hover:underline mb-2">
+        <span class="hidden lg:inline">View all</span>
+        <span class="lg:hidden text-2xl">→</span>
+      </a>
     </div>
 
     <!-- Grid -->
@@ -100,14 +103,26 @@ const props = defineProps({
 
 const emit = defineEmits(['prompt-click']);
 
+// Detect if mobile screen
+const isMobile = ref(false);
 
+// Check screen size on mount and resize
+if (process.client) {
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth < 1024; // lg breakpoint
+  };
+  
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+}
 
 // Pagination state
 const visibleCount = ref(16);
 
-// Display items based on visible count
+// Display items based on visible count and screen size
 const displayItems = computed(() => {
-  return props.prompts.slice(0, visibleCount.value);
+  const maxItems = isMobile.value ? 6 : visibleCount.value;
+  return props.prompts.slice(0, maxItems);
 });
 
 // Check if there are more items to show

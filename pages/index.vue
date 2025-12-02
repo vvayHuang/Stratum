@@ -4,7 +4,7 @@
     <!-- <div v-if="isLoading" class="fixed inset-0 bg-light-surface flex flex-col items-center justify-center z-50"> ... </div> -->
 
     <header class="sticky top-0 z-50 bg-light-surface/80 backdrop-blur-md border-light-outline-variant">
-      <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-[1440px] lg:px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
@@ -18,7 +18,7 @@
       </div>
       
       
-      <div class="mx-auto max-w-[1440px] px-4 w-full my-20">
+      <div class="mx-auto max-w-[1440px] px-4 py-6 w-full lg:my-20">
         <CommunitySection 
           ref="communitySection"
           :prompts="recentPrompts"
@@ -29,9 +29,8 @@
 
       
 
-      <div class="w-full">
-        <Footer />
-      </div>
+      <Footer />
+      
     </main>
 
     <LoginModal ref="loginModal" />

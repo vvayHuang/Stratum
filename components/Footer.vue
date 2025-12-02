@@ -1,15 +1,15 @@
 <template>
-  <div class="relative w-full overflow-hidden h-[845px] flex flex-col justify-between p-8 md:p-12">
+  <div class="relative w-full overflow-hidden h-[837px] md:h-[845px] flex flex-col justify-between p-4 md:p-12">
     <!-- Background Image -->
     <img
       :src="backgroundImage"
       alt="Footer Background"
-      class="absolute inset-0 w-full h-full object-cover object-top z-0"
+      class="absolute inset-0 w-full h-full object-none object-left-top md:object-cover z-0"
     />
 
     <!-- Overlay content -->
     <div class="relative z-10 flex-grow flex items-center justify-center">
-      <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif text-left text-[#FDFCF4] leading-tight max-w-4xl">
+      <h2 class="text-6xl font-brand text-left text-light-inverse-on-surface leading-tight max-w-4xl">
         Smart Surfing:<br />
         Where<br />
         Browsing Meets<br />
@@ -18,12 +18,12 @@
     </div>
 
     <!-- Bottom Bar -->
-    <div class="relative z-10 flex flex-col md:flex-row justify-between items-center text-[#FDFCF4] text-[16px] font-medium tracking-wide uppercase gap-4 md:gap-0">
+    <div class="relative z-10 flex flex-col-reverse md:flex-row justify-between md:items-center text-light-inverse-on-surface text-base font-medium tracking-wide uppercase gap-8 md:gap-0 mb-4 md:mb-0">
       <div class="opacity-80">
         &copy;2025 Stratum
       </div>
 
-      <div class="flex items-center gap-8">
+      <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
         <a href="#" class="flex gap-1 hover:opacity-80 transition-opacity group">
           X
           <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">

@@ -52,26 +52,7 @@
       </div>
     </div>
     
-    <!-- User Info / Login (for mobile) -->
-    <div class="flex items-center lg:hidden">
-        <!-- Authenticated State -->
-        <div v-if="user" class="relative">
-          <button ref="dropdownButtonRefMobile" @click="isDropdownOpen = !isDropdownOpen" class="flex items-center gap-2">
-            <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
-          </button>
-          
-          <!-- Dropdown Menu (for mobile) -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-surface text-light-on-surface rounded-md shadow-lg py-1 z-20 border border-light-outline-variant">
-            <NuxtLink to="/my-ideas" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant" @click="isDropdownOpen = false">
-              My Ideas
-            </NuxtLink>
-            <button @click="handleSignOut" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant">
-              Sign out
-            </button>
-          </div>
-        </div>
-         <!-- Unauthenticated State (No login button on mobile header, it is in offcanvas) -->
-      </div>
+    
 
 
     <!-- Off-canvas Menu -->

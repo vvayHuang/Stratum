@@ -2,7 +2,7 @@
   <div>
     <div v-if="!isLoading" ref="heroContainer" class="w-full h-[calc(100vh-80px)] flex flex-col justify-center items-center custom-gradient">
       <div class="flex flex-col items-center gap-8 w-full max-w-[800px] px-4">
-        <h1 class="font-brand text-4xl leading-3xl text-light-on-secondary-container text-center">
+        <h1 class="font-brand text-4xl leading-3xl text-light-on-secondary-container lg:text-center">
           Dive In: Discover Your Next Big Idea!
         </h1>
         

@@ -18,10 +18,13 @@
           </button>
         </div>
         <p
-          v-else-if="!isLoading"
-          class="text-center text-3xl font-brand text-light-on-surface italic"
+          v-else
+          :class="[
+            'text-center text-3xl font-brand italic',
+            isLoading && ideas.length === 0 ? 'text-shimmer' : 'text-light-on-surface'
+          ]"
         >
-          “{{ prompt }}”
+          "{{ prompt }}"
         </p>
       </div>
     </div>
@@ -416,6 +419,21 @@ onMounted(() => {
   background-repeat: no-repeat;
   background-size: 200% 100%; 
   animation: shimmer 1.5s infinite linear;
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    to right,
+    #221A14 0%,
+    #89511F 20%,
+    #221A14 40%,
+    #221A14 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
 }
 
 @keyframes shimmer {
