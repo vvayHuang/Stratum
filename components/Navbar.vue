@@ -56,24 +56,30 @@
 
 
     <!-- Off-canvas Menu -->
-    <transition name="slide">
-      <div v-if="isMenuOpen" class="fixed inset-0 z-30 bg-black bg-opacity-50" @click="isMenuOpen = false">
-        <div @click.stop class="fixed top-0 left-0 h-full w-64 p-4 shadow-lg bg-light-primary text-light-on-primary transform transition-transform duration-300 ease-in-out" 
-             :class="isMenuOpen ? 'translate-x-0' : '-translate-x-full'">
-          <div class="flex items-center justify-between mb-8">
-            <span class="text-lg font-bold">Menu</span>
-            <button @click="isMenuOpen = false" class="text-light-on-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <nav class="flex flex-col gap-6">
-            <NuxtLink to="/" @click="isMenuOpen = false" class="font-medium text-m">Home</NuxtLink>
-            <button class="text-left font-medium text-m">FAQ</button>
-            <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false" class="font-medium text-m">My Ideas</NuxtLink>
-            <button v-if="!user" @click="openLoginAndCloseMenu" class="text-left font-medium text-m">Login</button>
-          </nav>
+    <transition name="fade">
+      <div v-if="isMenuOpen" class="fixed inset-0 z-50 bg-light-surface flex flex-col p-6 h-[100dvh] overflow-y-auto">
+        <!-- Header -->
+        <div class="flex items-center gap-2 mb-12">
+          <NuxtLink to="/" @click="isMenuOpen = false" class="flex items-center gap-2">
+            <img src="/logo_horizontal.svg" alt="Stratum Logo" class="w-auto h-8" />
+          </NuxtLink>
+        </div>
+
+        <!-- Menu Items -->
+        <nav class="flex-grow flex flex-col justify-center gap-8">
+          <button class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Community</button>
+          <button class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Contact</button>
+          <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false" class="text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">My Ideas</NuxtLink>
+          <button v-if="!user" @click="openLoginAndCloseMenu" class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Login</button>
+        </nav>
+
+        <!-- Footer / Close Button -->
+        <div class="mt-auto">
+          <button @click="isMenuOpen = false" class="p-2 -ml-2 text-light-on-surface hover:opacity-70 transition-opacity">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </transition>
@@ -111,6 +117,15 @@ watch(() => route.path, () => {
   isMenuOpen.value = false;
 });
 
+// Prevent body scroll when menu is open
+watch(isMenuOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
+
 // Click outside to close dropdown
 const handleClickOutside = (event) => {
   if (isDropdownOpen.value && 
@@ -127,15 +142,16 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
+  document.body.style.overflow = ''; // Ensure scroll is restored on unmount
 });
 </script>
 
 <style>
-/* For the off-canvas menu slide transition */
-.slide-enter-active, .slide-leave-active {
+/* For the full-screen menu fade transition */
+.fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s ease;
 }
-.slide-enter-from, .slide-leave-to {
+.fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
 </style>

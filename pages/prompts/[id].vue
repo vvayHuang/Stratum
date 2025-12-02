@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
     <header>
-      <div class="mx-auto max-w-[1440px] px-6 flex items-center justify-between">
+      <div class="mx-auto max-w-[1440px] md:px-6 flex items-center justify-between">
         <Navbar @open-login-modal="loginModal.openModal()" />
       </div>
     </header>
