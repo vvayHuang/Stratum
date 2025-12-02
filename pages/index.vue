@@ -18,7 +18,7 @@
       </div>
       
       
-      <div class="mx-auto max-w-[1440px] px-4 py-6 w-full lg:my-20">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-12 py-6 w-full lg:my-20">
         <CommunitySection 
           ref="communitySection"
           :prompts="recentPrompts"

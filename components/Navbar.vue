@@ -13,7 +13,7 @@
 
       <!-- Logo -->
       <NuxtLink to="/" class="px-2 py-1">
-        <img src="/logo_horizontal.svg" alt="Stratum Logo" class="w-auto h-12" />
+        <img src="/logo_horizontal.svg" alt="Stratum Logo" class="w-auto h-8 md:h-12" />
       </NuxtLink>
 
       <!-- Desktop Navigation -->
