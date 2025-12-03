@@ -50,6 +50,10 @@ import Footer from "~/components/Footer.vue";
 import LoginModal from "~/components/LoginModal.vue";
 import type { Database } from '~/types/database.types';
 
+definePageMeta({
+  layout: false
+});
+
 const user = useSupabaseUser();
 const router = useRouter(); // Initialize router
 const cardsComponent = ref(null);
