@@ -34,25 +34,32 @@
             <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
             <span class="hidden font-medium lg:block text-m">{{ user.user_metadata.full_name }}</span>
           </button>
-          
+
           <!-- Dropdown Menu -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-light-surface text-light-on-surface rounded-md shadow-lg py-1 z-20 border border-light-outline-variant">
-            <NuxtLink to="/my-ideas" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant" @click="isDropdownOpen = false">
+          <div ref="dropdownMenuRef" v-if="isDropdownOpen"
+            class="absolute right-0 my-2 w-64 bg-light-surface-container text-light-on-surface rounded-xl shadow-lg z-20 overflow-hidden">
+            <NuxtLink to="/my-ideas"
+              class="flex items-center w-full px-6 py-4 text-l text-left hover:bg-light-surface-variant hover:bg-opacity-50 transition-colors"
+              @click="isDropdownOpen = false">
+              <MaterialIcon name="emoji_objects" class="mr-4" />
               My Ideas
             </NuxtLink>
-            <button @click="handleSignOut" class="block w-full px-4 py-2 text-sm text-left hover:bg-light-surface-variant">
+            <button @click="handleSignOut"
+              class="flex items-center w-full px-6 py-4 text-l text-left hover:bg-light-surface-variant hover:bg-opacity-50 transition-colors">
+              <MaterialIcon name="logout" class="mr-4" />
               Sign out
             </button>
           </div>
         </div>
         <!-- Unauthenticated State -->
-        <NuxtLink v-else to="/login" class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
+        <NuxtLink v-else to="/login"
+          class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
           Login
         </NuxtLink>
       </div>
     </div>
-    
-    
+
+
 
 
     <!-- Off-canvas Menu -->
@@ -67,17 +74,24 @@
 
         <!-- Menu Items -->
         <nav class="flex-grow flex flex-col justify-center gap-8">
-          <button class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Community</button>
-          <button class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Contact</button>
-          <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false" class="text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">My Ideas</NuxtLink>
-          <NuxtLink v-if="!user" to="/login" @click="isMenuOpen = false" class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Login</NuxtLink>
+          <button
+            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Community</button>
+          <button
+            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Contact</button>
+          <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false"
+            class="text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">My Ideas</NuxtLink>
+          <NuxtLink v-if="!user" to="/login" @click="isMenuOpen = false"
+            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Login
+          </NuxtLink>
         </nav>
 
         <!-- Footer / Close Button -->
         <div class="mt-auto">
-          <button @click="isMenuOpen = false" class="p-2 -ml-2 text-light-on-surface hover:opacity-70 transition-opacity">
+          <button @click="isMenuOpen = false"
+            class="p-2 -ml-2 text-light-on-surface hover:opacity-70 transition-opacity">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
             </svg>
           </button>
         </div>
@@ -128,10 +142,10 @@ watch(isMenuOpen, (isOpen) => {
 
 // Click outside to close dropdown
 const handleClickOutside = (event) => {
-  if (isDropdownOpen.value && 
-      !dropdownButtonRef.value?.contains(event.target) && 
-      !dropdownMenuRef.value?.contains(event.target) &&
-      !dropdownButtonRefMobile.value?.contains(event.target)) {
+  if (isDropdownOpen.value &&
+    !dropdownButtonRef.value?.contains(event.target) &&
+    !dropdownMenuRef.value?.contains(event.target) &&
+    !dropdownButtonRefMobile.value?.contains(event.target)) {
     isDropdownOpen.value = false;
   }
 };
@@ -148,10 +162,13 @@ onUnmounted(() => {
 
 <style>
 /* For the full-screen menu fade transition */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.3s ease;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

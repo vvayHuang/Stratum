@@ -30,7 +30,7 @@
         <!-- Main Content -->
         <!-- Desktop: Vertically centered (via justify-between on parent, this is the middle element) -->
         <div class="flex flex-col items-start w-full">
-          <h1 class="text-1xl leading-[40px] lg:text-5xl lg:leading-[48px] font-brand text-light-on-surface mb-4">
+          <h1 class="text-1xl leading-2xl lg:text-5xl lg:leading-4xl font-brand text-light-on-surface mb-4">
             Welcome to Stratum
           </h1>
           <p class="text-light-on-surface-variant text-sm mb-8 lg:mb-10">
