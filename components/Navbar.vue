@@ -46,9 +46,9 @@
           </div>
         </div>
         <!-- Unauthenticated State -->
-        <button v-else @click="() => emit('open-login-modal')" class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
+        <NuxtLink v-else to="/login" class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
           Login
-        </button>
+        </NuxtLink>
       </div>
     </div>
     
@@ -70,7 +70,7 @@
           <button class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Community</button>
           <button class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Contact</button>
           <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false" class="text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">My Ideas</NuxtLink>
-          <button v-if="!user" @click="openLoginAndCloseMenu" class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Login</button>
+          <NuxtLink v-if="!user" to="/login" @click="isMenuOpen = false" class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Login</NuxtLink>
         </nav>
 
         <!-- Footer / Close Button -->
@@ -92,7 +92,7 @@ import { useSupabaseUser, useSupabaseClient, useRoute } from '#imports';
 
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
-const emit = defineEmits(['open-login-modal']);
+// const emit = defineEmits(['open-login-modal']);
 const isDropdownOpen = ref(false);
 const isMenuOpen = ref(false);
 const route = useRoute();
@@ -107,10 +107,10 @@ const handleSignOut = async () => {
   isMenuOpen.value = false; // Close mobile menu on sign out
 };
 
-const openLoginAndCloseMenu = () => {
-  emit('open-login-modal');
-  isMenuOpen.value = false;
-};
+// const openLoginAndCloseMenu = () => {
+//   emit('open-login-modal');
+//   isMenuOpen.value = false;
+// };
 
 // Close mobile menu on route change
 watch(() => route.path, () => {

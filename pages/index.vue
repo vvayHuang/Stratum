@@ -5,7 +5,7 @@
 
     <header class="sticky top-0 z-50 bg-light-surface/80 backdrop-blur-md border-light-outline-variant">
       <div class="mx-auto max-w-[1440px] lg:px-6 flex items-center justify-between">
-        <Navbar @open-login-modal="loginModal.openModal()" />
+        <Navbar />
       </div>
     </header>
 
@@ -33,7 +33,7 @@
       
     </main>
 
-    <LoginModal ref="loginModal" />
+
   </div>
 </template>
 
@@ -47,7 +47,7 @@ import Hero from "~/components/Hero.vue";
 import CommunitySection from "~/components/CommunitySection.vue";
 import Cards from "~/components/Cards.vue";
 import Footer from "~/components/Footer.vue";
-import LoginModal from "~/components/LoginModal.vue";
+// import LoginModal from "~/components/LoginModal.vue";
 import type { Database } from '~/types/database.types';
 
 definePageMeta({
@@ -59,7 +59,7 @@ const router = useRouter(); // Initialize router
 const cardsComponent = ref(null);
 const heroComponent = ref(null);
 const communitySection = ref(null);
-const loginModal = ref(null);
+// const loginModal = ref(null);
 const isLoading = ref(false);
 
 const recentPrompts = ref([]);
@@ -102,11 +102,11 @@ onMounted(async () => {
   }
 });
 
-watchEffect(() => {
-  if (user.value && loginModal.value) {
-    loginModal.value.closeModal();
-  }
-});
+// watchEffect(() => {
+//   if (user.value && loginModal.value) {
+//     loginModal.value.closeModal();
+//   }
+// });
 
 const handleShowMoney = async (p) => {
   console.log("handleShowMoney called!");

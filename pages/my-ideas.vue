@@ -79,7 +79,7 @@
       </div>
     </main>
 
-    <LoginModal ref="loginModal" />
+
     <DeleteConfirmationModal ref="deleteModal" @confirm="confirmDelete" />
   </div>
 </template>
@@ -88,7 +88,7 @@
 import { ref, computed, watch } from 'vue';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import Navbar from '~/components/Navbar.vue';
-import LoginModal from '~/components/LoginModal.vue';
+// import LoginModal from '~/components/LoginModal.vue';
 import DeleteConfirmationModal from '~/components/DeleteConfirmationModal.vue';
 
 definePageMeta({

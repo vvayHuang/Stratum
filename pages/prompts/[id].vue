@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
     <header>
       <div class="mx-auto max-w-[1440px] md:px-6 flex items-center justify-between">
-        <Navbar @open-login-modal="loginModal.openModal()" />
+        <Navbar />
       </div>
     </header>
 
@@ -14,7 +14,7 @@
       </div>
     </main>
 
-    <LoginModal ref="loginModal" />
+
   </div>
 </template>
 
@@ -25,7 +25,7 @@ import { useSupabaseClient } from '#imports';
 import { navigateTo } from '#app'; // Add this import
 import Navbar from '~/components/Navbar.vue';
 import PromptLayout from '~/components/PromptLayout.vue';
-import LoginModal from '~/components/LoginModal.vue';
+// import LoginModal from '~/components/LoginModal.vue';
 
 definePageMeta({ auth: false });
 
@@ -37,7 +37,7 @@ const prompt = ref('');
 const ideas = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
-const loginModal = ref(null);
+// const loginModal = ref(null);
 
 const fetchPromptAndIdeas = async () => {
   try {
