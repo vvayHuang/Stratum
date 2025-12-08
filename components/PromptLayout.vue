@@ -2,49 +2,18 @@
   <div>
     <!-- Main content area with consistent height -->
     <div v-if="!props.error" class="min-h-[796px] flex flex-col items-center mx-auto max-w-[1440px] w-full">
-      <div v-if="isLoading && ideas.length === 0" class="container-centered w-full">
-        <!-- Skeleton Navigation Buttons -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <div class="h-16 w-full md:w-[200px] rounded-md skeleton-shimmer"></div>
-          <div class="h-16 w-full md:w-[200px] rounded-md skeleton-shimmer"></div>
-        </div>
-
-        <!-- Skeleton Card -->
-        <div
-          class="bg-light-surface rounded-[6px] p-8 md:p-16 relative overflow-hidden min-h-[600px] border border-light-outline">
-          <div class="flex justify-between items-start mb-12">
-            <!-- Title Skeleton -->
-            <div class="h-[57px] w-2/3 rounded-md skeleton-shimmer"></div>
-
-            <!-- Buttons Skeleton -->
-            <div class="flex gap-4">
-              <div class="h-[48px] w-[48px] rounded-full skeleton-shimmer"></div>
-              <div class="h-[48px] w-[48px] rounded-full skeleton-shimmer"></div>
-            </div>
-          </div>
-
-          <!-- Description Skeleton -->
-          <div class="space-y-4 mb-16">
-            <div v-for="n in 3" :key="n" class="h-[20px] w-full rounded-md skeleton-shimmer"></div>
-          </div>
-
-          <!-- Marquee Skeleton Background -->
-          <div class="space-y-8 opacity-30">
-            <div v-for="n in 7" :key="n" class="flex items-center gap-6">
-              <div class="w-16 h-16 rounded-full bg-light-tertiary-container shrink-0"></div>
-              <div class="flex flex-col gap-3 w-full">
-                <div class="h-5 w-full rounded-full bg-light-tertiary-container"></div>
-                <div class="h-5 w-3/4 rounded-full bg-light-tertiary-container"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div v-if="isLoading && ideas.length === 0"
+        class="flex-grow flex items-center md:justify-center w-full p-8 md:p-16">
+        <h2
+          class="text-3xl font-brand font-medium italic leading-tight text-start md:text-center text-shimmer max-w-4xl">
+          {{ props.prompt }}
+        </h2>
       </div>
 
       <div v-else-if="ideas.length > 0" class="container-centered w-full">
         <!-- Main Card -->
         <div ref="cardContainer"
-          class="bg-light-surface text-light-on-surface p-8 md:p-16 relative overflow-hidden h-[calc(100vh-16px)]">
+          class="bg-light-surface text-light-on-surface py-8 px-4 md:p-16 relative overflow-hidden ">
           <div v-if="currentIdea">
             <!-- Header: Title and Nav Buttons -->
             <div class="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
@@ -63,17 +32,17 @@
             </div>
 
             <div ref="cardDescriptionWrapper" class="overflow-hidden">
-              <p class="text-[18px] md:text-[20px] leading-[1.6] mb-16 text-light-on-surface-variant">
+              <p class="text-[18px] md:text-[20px] leading-[1.6] mb-12 text-light-on-surface">
                 {{ currentIdea.description }}
               </p>
             </div>
 
             <!-- Content Area / Marquee -->
             <div v-if="!isGenerating && !currentIdea.reports"
-              class="relative flex flex-col items-center justify-center py-12 overflow-hidden h-[500px]">
+              class="relative flex flex-col items-center justify-center px-4 py-12 overflow-hidden h-[412px] md:h-[712px]">
               <!-- Background Decoration (Steps Placeholder Marquee) -->
               <div ref="marqueeContainer"
-                class="absolute inset-0 flex flex-col gap-8 opacity-50 pointer-events-none select-none">
+                class="absolute inset-0 flex flex-col gap-4 md:gap-8 opacity-50 pointer-events-none select-none">
                 <!-- Sequence of items (7 repeated blocks to fill space) -->
                 <div v-for="n in 14" :key="n" class="flex items-center gap-6">
                   <div class="w-16 h-16 rounded-full bg-light-tertiary-container shrink-0"></div>
@@ -87,7 +56,7 @@
               <!-- Center Button -->
               <div ref="generateGuideBtnWrapper" class="overflow-hidden z-10 relative">
                 <Button @click="generateGuide" variant="secondary-container" icon="emoji_objects"
-                  customClass="px-16 py-8 text-xl font-brand w-full md:w-auto">
+                  customClass="px-6 py-4 md:px-16 md:py-8 md:text-xl md:font-brand w-full md:w-auto">
                   GENERATE GUIDE
                 </Button>
               </div>
@@ -99,7 +68,7 @@
               </div>
             </div>
 
-            <div v-else-if="isGenerating" class="flex flex-col items-center justify-center h-[500px]">
+            <div v-else-if="isGenerating" class="flex flex-col items-center justify-center h-[712px]">
               <svg class="animate-spin h-10 w-10 text-light-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -9,7 +9,8 @@
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
       <div class="flex-grow flex justify-center">
         <div class="my-10 w-full">
-          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset" @update:idea="handleUpdateIdea" />
+          <PromptLayout :prompt="prompt" :ideas="ideas" :isLoading="isLoading" :error="error" @reset="handleReset"
+            @update:idea="handleUpdateIdea" />
         </div>
       </div>
     </main>
@@ -41,7 +42,7 @@ const error = ref(null);
 
 const fetchPromptAndIdeas = async () => {
   try {
-    // Fetch the prompt string
+    // 1. Fetch prompt first to show it on loading screen
     const { data: promptData, error: promptError } = await supabase
       .from('prompts')
       .select('prompt')
@@ -53,8 +54,8 @@ const fetchPromptAndIdeas = async () => {
     }
     prompt.value = promptData.prompt;
 
-    // Fetch ideas associated with the prompt_id, including reports and steps
-    const { data: fetchedIdeas, error: ideasError } = await supabase
+    // 2. Fetch ideas with a minimum delay to ensure loading animation is visible
+    const fetchIdeasPromise = supabase
       .from('ideas')
       .select(`
         *,
@@ -64,6 +65,12 @@ const fetchPromptAndIdeas = async () => {
         )
       `)
       .eq('prompt_id', promptId);
+
+    const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2000));
+
+    const [ideasResult] = await Promise.all([fetchIdeasPromise, minDelayPromise]);
+
+    const { data: fetchedIdeas, error: ideasError } = ideasResult;
 
     if (ideasError) {
       throw new Error('Failed to fetch ideas.');
