@@ -18,8 +18,8 @@
 
       <!-- Desktop Navigation -->
       <nav class="hidden lg:flex gap-8 items-center">
-        <NuxtLink to="/" class="font-medium text-m">Community</NuxtLink>
-        <button class="font-medium text-m">Contact</button>
+        <NuxtLink to="/community" class="font-medium text-m">Community</NuxtLink>
+        <button @click="isSearchModalOpen = true" class="font-medium text-m">Search</button>
       </nav>
     </div>
 
@@ -74,10 +74,11 @@
 
         <!-- Menu Items -->
         <nav class="flex-grow flex flex-col justify-center gap-8">
-          <button
-            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Community</button>
-          <button
-            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Contact</button>
+          <NuxtLink to="/community" @click="isMenuOpen = false"
+            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Community
+          </NuxtLink>
+          <button @click="isSearchModalOpen = true; isMenuOpen = false"
+            class="text-left text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">Search</button>
           <NuxtLink v-if="user" to="/my-ideas" @click="isMenuOpen = false"
             class="text-4xl font-brand text-light-on-surface hover:opacity-70 transition-opacity">My Ideas</NuxtLink>
           <NuxtLink v-if="!user" to="/login" @click="isMenuOpen = false"
@@ -97,6 +98,9 @@
         </div>
       </div>
     </transition>
+
+    <!-- Search Modal -->
+    <SearchModal v-if="isSearchModalOpen" @close="isSearchModalOpen = false" />
   </div>
 </template>
 
@@ -109,6 +113,7 @@ const supabase = useSupabaseClient();
 // const emit = defineEmits(['open-login-modal']);
 const isDropdownOpen = ref(false);
 const isMenuOpen = ref(false);
+const isSearchModalOpen = ref(false);
 const route = useRoute();
 
 const dropdownButtonRef = ref(null);
@@ -132,8 +137,8 @@ watch(() => route.path, () => {
 });
 
 // Prevent body scroll when menu is open
-watch(isMenuOpen, (isOpen) => {
-  if (isOpen) {
+watch([isMenuOpen, isSearchModalOpen], ([menuOpen, searchOpen]) => {
+  if (menuOpen || searchOpen) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
