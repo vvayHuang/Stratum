@@ -16,21 +16,17 @@
           <Hero ref="heroComponent" :isLoading="isLoading" @show-money="handleShowMoney" />
         </div>
       </div>
-      
-      
+
+
       <div class="mx-auto max-w-[1440px] px-4 md:px-12 py-6 w-full lg:my-20">
-        <CommunitySection 
-          ref="communitySection"
-          :prompts="recentPrompts"
-          :isLoading="isFetchingPrompts"
-          @prompt-click="(promptText, promptId) => router.push(`/prompts/${promptId}`)"
-        />
+        <CommunitySection ref="communitySection" :prompts="recentPrompts" :isLoading="isFetchingPrompts"
+          @prompt-click="(promptText, promptId) => router.push(`/prompts/${promptId}`)" />
       </div>
 
-      
+
 
       <Footer />
-      
+
     </main>
 
 
@@ -47,7 +43,6 @@ import Hero from "~/components/Hero.vue";
 import CommunitySection from "~/components/CommunitySection.vue";
 import Cards from "~/components/Cards.vue";
 import Footer from "~/components/Footer.vue";
-// import LoginModal from "~/components/LoginModal.vue";
 import type { Database } from '~/types/database.types';
 
 definePageMeta({
@@ -69,7 +64,7 @@ const isFetchingPrompts = ref(true);
 onMounted(async () => {
   try {
     const supabase = useSupabaseClient<Database>();
-    
+
     const { data: prompts, error: promptsError } = await supabase
       .from('prompts')
       .select(`
@@ -81,7 +76,7 @@ onMounted(async () => {
       `)
       .order('created_at', { ascending: false })
       .limit(200);
-    
+
     if (promptsError) throw promptsError;
 
     if (prompts && prompts.length > 0) {
@@ -122,7 +117,7 @@ const handleShowMoney = async (p) => {
       communityAnim ? communityAnim : Promise.resolve(),
       // cardsAnim ? cardsAnim : Promise.resolve(),
     ]);
-    
+
     isLoading.value = true; // Show skeleton now
 
     let apiBody = { prompt: p };
@@ -139,7 +134,7 @@ const handleShowMoney = async (p) => {
       body: JSON.stringify(apiBody),
       signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
 
     if (!res.ok) {
@@ -154,7 +149,7 @@ const handleShowMoney = async (p) => {
     if (data.error) {
       throw new Error(data.error);
     }
-    const newPromptId = data.promptId; 
+    const newPromptId = data.promptId;
 
     if (newPromptId) {
       console.log("Navigating to:", `/prompts/${newPromptId}`);

@@ -36,32 +36,32 @@
 
     <!-- Show More/Less Button -->
     <div class="flex justify-center mt-12" v-if="reportData.steps.length > 3">
-      <button @click="toggleShowAllSteps"
-        class="group flex items-center gap-3 px-6 py-3 rounded-full bg-light-surface-variant/10 hover:bg-light-surface-variant/20 transition-all duration-300">
-        <p class="text-lg font-bold text-light-onsur">
+      <Button @click="toggleShowAllSteps" variant="secondary-container"
+        customClass="px-4 py-2.5 md:px-6 md:py-4 gap-2 group transition-all duration-300"
+        :icon="showAllSteps ? 'keyboard_arrow_up' : 'keyboard_arrow_down'">
+        <p class="text-lg font-bold">
           {{ showAllSteps ? 'Show less steps' : `Show all ${reportData.steps.length} steps` }}
         </p>
-        <img src="~/assets/arrow-right.svg" alt="Toggle steps" class="w-5 h-5 transition-transform duration-300"
-          :class="{ 'transform -rotate-90': showAllSteps, 'transform rotate-90': !showAllSteps }" />
-      </button>
+      </Button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Button from './Button.vue';
 
 const stepStyles = [
-  { bg: 'bg-primary-90', text: 'text-primary-20' },  // Step 1
-  { bg: 'bg-primary-80', text: 'text-primary-25' },  // Step 2
-  { bg: 'bg-primary-70', text: 'text-primary-30' },  // Step 3
-  { bg: 'bg-primary-60', text: 'text-primary-35' },  // Step 4
-  { bg: 'bg-primary-50', text: 'text-primary-10' },  // Step 5
-  { bg: 'bg-primary-40', text: 'text-primary-90' },  // Step 6
-  { bg: 'bg-primary-35', text: 'text-primary-98' },  // Step 7
-  { bg: 'bg-primary-30', text: 'text-primary-95' },  // Step 8
-  { bg: 'bg-primary-25', text: 'text-primary-90' },  // Step 9
-  { bg: 'bg-primary-20', text: 'text-primary-80' },  // Step 10
+  { bg: 'bg-light-inverse-surface', text: 'text-light-inverse-on-surface' },  // Step 1
+  { bg: 'bg-light-primary', text: 'text-light-on-primary' },  // Step 2
+  { bg: 'bg-light-primary-container', text: 'text-light-on-primary-container' },  // Step 3
+  { bg: 'bg-light-primary-fixed', text: 'text-light-on-primary-fixed' },  // Step 4
+  { bg: 'bg-light-secondary', text: 'text-light-on-secondary' },  // Step 5
+  { bg: 'bg-light-secondary-container', text: 'text-light-on-secondary-container' },  // Step 6
+  { bg: 'bg-light-secondary-fixed', text: 'text-light-on-secondary-fixed' },  // Step 7
+  { bg: 'bg-light-tertiary', text: 'text-light-on-tertiary' },  // Step 8
+  { bg: 'bg-light-tertiary-container', text: 'text-light-on-tertiary-container' },  // Step 9
+  { bg: 'bg-light-tertiary-fixed', text: 'text-light-on-tertiary-fixed' },  // Step 10
 ];
 
 const props = defineProps({
