@@ -21,12 +21,14 @@
                 <img :src="item.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.id || 'default'}`"
                     alt="Author" class="w-full h-full object-cover" />
             </div>
-            <div class="flex items-center gap-2 overflow-hidden">
-                <span
-                    class="text-s font-medium text-neutral-25/90 group-hover:text-white/90 shrink-0 transition-colors duration-300">by</span>
+            <div class="flex flex-col overflow-hidden">
                 <span
                     class="text-s font-medium text-neutral-25 group-hover:text-white truncate transition-colors duration-300">
                     {{ item.author }}
+                </span>
+                <span
+                    class="text-xs text-neutral-25/60 group-hover:text-white/60 truncate transition-colors duration-300">
+                    {{ formattedTime }}
                 </span>
             </div>
         </div>
@@ -34,7 +36,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
     item: {
         type: Object,
         required: true,
@@ -42,4 +46,39 @@ defineProps({
 });
 
 defineEmits(['click']);
+
+const formattedTime = computed(() => {
+    if (!props.item.created_at) return 'Edited recently';
+
+    const date = new Date(props.item.created_at);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) {
+        return 'Edited just now';
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+        return `Edited ${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+        return `Edited ${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) {
+        return `Edited ${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    }
+
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) {
+        return `Edited ${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+    }
+
+    const diffInYears = Math.floor(diffInDays / 365);
+    return `Edited ${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+});
 </script>

@@ -45,10 +45,10 @@
                 class="absolute inset-0 flex flex-col gap-4 md:gap-8 opacity-50 pointer-events-none select-none">
                 <!-- Sequence of items (7 repeated blocks to fill space) -->
                 <div v-for="n in 14" :key="n" class="flex items-center gap-6">
-                  <div class="w-16 h-16 rounded-full bg-light-tertiary-container shrink-0"></div>
+                  <div class="w-16 h-16 rounded-full skeleton-shimmer shrink-0"></div>
                   <div class="flex flex-col gap-3 w-full">
-                    <div class="h-5 w-full rounded-full bg-light-tertiary-container"></div>
-                    <div class="h-5 w-3/4 rounded-full bg-light-tertiary-container"></div>
+                    <div class="h-5 w-full rounded-full skeleton-shimmer"></div>
+                    <div class="h-5 w-3/4 rounded-full skeleton-shimmer"></div>
                   </div>
                 </div>
               </div>
@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, nextTick, onBeforeUnmount } from "vue";
 import gsap from "gsap";
 
 import ReportContainer from "./ReportContainer.vue";
@@ -126,6 +126,7 @@ const generateGuideTextWrapper = ref(null);
 const isGenerating = ref(false);
 
 const marqueeContainer = ref(null);
+let marqueeTimeline = null; // Store timeline reference
 
 const currentIdea = computed(() => {
   return props.ideas.length > 0 ? props.ideas[currentIndex.value] : null;
@@ -165,35 +166,34 @@ const animateCardIn = (direction) => {
   return tl;
 };
 
-const startMarqueeAnimation = () => {
-  // Approximate height of one sequence block + gap
-  // Each block has 3 items. Each item is 64px (h-16) + 24px gap (gap-6) = 88px?
-  // Wait, flex-col gap-8 (32px).
-  // Item: h-16 (64px).
-  // 3 items + 2 gaps of 32px? No, the items themselves have gap-6 (24px) inside? No, the items are the rows.
-  // The container has `gap-8` (32px).
-  // Each row is `h-16` (64px).
-  // So one sequence of 3 items:
-  // Item 1 (64px) + Gap (32px) + Item 2 (64px) + Gap (32px) + Item 3 (64px) + Gap (32px) (to next sequence)
-  // Total height of one sequence = 3 * 64 + 3 * 32 = 192 + 96 = 288px.
+const stopMarqueeAnimation = () => {
+  if (marqueeTimeline) {
+    marqueeTimeline.kill();
+    marqueeTimeline = null;
+  }
+};
 
-  // 7 items * (64px height + 32px gap) = 672px
-  const singleSequenceHeight = 672;
+const startMarqueeAnimation = () => {
+  stopMarqueeAnimation(); // Ensure clean slate
+
+  // 14 items in loop. Each item: 64px height + 32px gap = 96px.
+  // We want to scroll half of them to create a seamless loop?
+  // If we have 14 items, and we scroll 7 items worth of height, it might be seamless if the list repeats?
+  // 7 * 96 = 672px.
 
   if (marqueeContainer.value) {
-    // Ensure the container starts at 0
+    // Reset position immediately
     gsap.set(marqueeContainer.value, { y: 0 });
 
-    const tl = gsap.timeline({
+    marqueeTimeline = gsap.timeline({
       repeat: -1, // Infinite loop
-      ease: "none", // Linear movement
-      delay: 0, // No initial delay
+      defaults: { ease: "none" }
     });
 
-    // Animate up by the height of one sequence
-    tl.to(marqueeContainer.value, {
-      y: -singleSequenceHeight,
-      duration: 10, // Adjust duration for desired speed
+    // Animate up by 672px (height of 7 items)
+    marqueeTimeline.to(marqueeContainer.value, {
+      y: -672,
+      duration: 15, // Slower, consistent speed
       ease: "none",
     });
   }
@@ -201,6 +201,7 @@ const startMarqueeAnimation = () => {
 
 const nextIdea = () => {
   if (currentIndex.value < props.ideas.length - 1) {
+    stopMarqueeAnimation();
     gsap.to(cardContainer.value, {
       x: -100,
       opacity: 0,
@@ -218,6 +219,7 @@ const nextIdea = () => {
 
 const prevIdea = () => {
   if (currentIndex.value > 0) {
+    stopMarqueeAnimation();
     gsap.to(cardContainer.value, {
       x: 100,
       opacity: 0,
@@ -236,6 +238,9 @@ const prevIdea = () => {
 const generateGuide = async () => {
   if (!currentIdea.value) return;
   isGenerating.value = true;
+  stopMarqueeAnimation(); // Stop animation while generating? Or keep it? User didn't specify, but usually good to stop if it gets replaced.
+  // Actually, while generating, the block is replaced by the spinner, so it's fine.
+
   try {
     const res = await fetch("/api/gemini", {
       method: "POST",
@@ -264,14 +269,17 @@ const generateGuide = async () => {
   }
 };
 
-// Watch for changes in currentIdea to trigger animations
+// Watch for changes in currentIdea to trigger marquee if needed
 watch(
-  currentIdea,
+  () => currentIdea.value,
   (newIdea) => {
     if (newIdea) {
       nextTick(() => {
+        // Only start if reports are missing (placeholder mode) AND container exists
         if (!newIdea.reports && marqueeContainer.value) {
           startMarqueeAnimation();
+        } else {
+          stopMarqueeAnimation();
         }
       });
     }
@@ -279,24 +287,35 @@ watch(
   { deep: true }
 );
 
+// Also watch marqueeContainer ref specifically, in case it renders later
+watch(marqueeContainer, (newVal) => {
+  if (newVal && currentIdea.value && !currentIdea.value.reports) {
+    startMarqueeAnimation();
+  }
+});
+
 // Initial animation when component is mounted and an idea is already present
 onMounted(() => {
   if (currentIdea.value && !currentIdea.value.reports && marqueeContainer.value) {
     startMarqueeAnimation();
   }
 });
+
+onBeforeUnmount(() => {
+  stopMarqueeAnimation();
+});
 </script>
 
 <style scoped>
 .skeleton-shimmer {
-  background: #E3C0A7;
+  background: #E2E7AF;
   /* secondary-80 from palette as base */
   background-image: linear-gradient(to right,
-      #E3C0A7 0%,
+      #E2E7AF 0%,
       #FFDCC4 20%,
       /* secondary-90 highlight */
-      #E3C0A7 40%,
-      #E3C0A7 100%);
+      #E2E7AF 40%,
+      #E2E7AF 100%);
   background-repeat: no-repeat;
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;

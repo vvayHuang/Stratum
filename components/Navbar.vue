@@ -155,13 +155,22 @@ const handleClickOutside = (event) => {
   }
 };
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
   document.body.style.overflow = ''; // Ensure scroll is restored on unmount
+  document.removeEventListener('keydown', handleKeydown);
+});
+
+const handleKeydown = (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    isSearchModalOpen.value = true;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  document.addEventListener('keydown', handleKeydown);
 });
 </script>
 
