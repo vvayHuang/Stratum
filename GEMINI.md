@@ -2,13 +2,16 @@
 
 這是一個從 Figma 設計啟動的 Nuxt.js v3 專案。它使用 Tailwind CSS 進行樣式設計，並使用 GSAP 進行動畫。該專案的目標是提供一個網頁介面，讓使用者可以根據他們的興趣，使用 Google Gemini API 獲取職涯建議。
 
-該專案現在整合了 **Supabase**，用於使用者身份驗證（透過 Google OAuth）和資料庫儲存。為了讓所有訪客都能探索這個應用的可能性，首頁的卡片輪播會展示由所有使用者提交的公開提示詞。
+該專案現在整合了 **Supabase**，用於使用者身份驗證（透過 Google OAuth）和資料庫儲存。為了打造一個協作的環境，專案增加了一個 **社群頁面 (`/community`)**，所有使用者提交的公開提示詞都會展示在此處以供探索。已登入的使用者也擁有一個個人的 **「我的想法」(`my-ideas`)** 專區，來管理自己的提示詞和生成的指南。應用程式還包括了**搜尋**和**刪除**功能。
 
 該專案的結構是一個標準的 Nuxt 應用程式：
-- `pages/index.vue`：主要且唯一的頁面，處理主要佈局和 API 呼叫。
-- `components/`：包含 Vue 元件 `Navbar.vue`、`Hero.vue`、`Cards.vue` 和 `LoginModal.vue`。
-- `server/api/gemini.post.ts`：與 Gemini API 通訊並將互動儲存到資料庫的伺服器端 API 路由。
-- `nuxt.config.ts`：Nuxt 配置檔案，用於設定 Tailwind 和 Supabase 模組。
+- `pages/index.vue`：主要的應用程式登陸頁面。
+- `pages/community.vue`：展示所有來自社群的公開提示詞。
+- `pages/my-ideas.vue`：一個受保護的頁面，讓使用者檢視和管理自己的想法。
+- `pages/prompts/[id].vue`：一個動態路由，用於顯示特定的提示詞及其詳細資訊。
+- `components/`：包含可重用的 Vue 元件，如 `Navbar.vue`、`CommunityCard.vue`、`SearchModal.vue` 和 `DeleteConfirmationModal.vue`。
+- `server/api/gemini.post.ts`：與 Gemini API 通訊並處理資料庫互動（建立、讀取、刪除）的伺服器端 API 路由。
+- `nuxt.config.ts`：用於設定 Tailwind 和 Supabase 模組的 Nuxt 配置檔案。
 - `SUPABASE_SETUP.md`：設定 Supabase 專案和資料庫結構的詳細指南。
 - **資料庫表格**：該專案使用關聯式結構來儲存使用者資料、提示和生成的指南。主要表格包括 `users`、`prompts`、`ideas`、`reports` 和 `steps`。
 
