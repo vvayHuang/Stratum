@@ -7,14 +7,15 @@
     </header>
 
     <main class="flex-grow flex flex-col pb-10 overflow-hidden">
-      <div class="mx-auto max-w-[1440px] px-6 w-full py-10">
+      <div class="mx-auto max-w-[1440px] px-12 w-full py-20">
         <div class="mb-10">
           <h1 class="text-5xl font-bold mb-2 font-brand">My Ideas</h1>
         </div>
 
 
-        <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div v-for="i in 16" :key="i" class="bg-light-surface-container-low p-6 rounded-xl border border-light-outline flex flex-col justify-between h-[229px] relative">
+        <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
+          <div v-for="i in 16" :key="i"
+            class="bg-light-surface-dim p-4 rounded-xl border border-light-outline flex flex-col justify-between h-[229px] relative">
             <div>
               <!-- Prompt text skeleton -->
               <div class="space-y-3 mb-4">
@@ -34,44 +35,47 @@
         <div v-else-if="error" class="text-center text-xl text-light-error">Error: {{ error }}</div>
         <div v-else-if="userPrompts.length === 0" class="text-center text-xl">You haven't generated any ideas yet.</div>
         <div v-else>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div
-              v-for="prompt in displayedPrompts"
-              :key="prompt.id"
-              class="group relative bg-light-surface-container-low p-4 rounded-xl border border-light-outline flex flex-col justify-between h-[229px] transition-colors overflow-hidden"
-            >
-              <!-- Delete Button (Hover) -->
-              <button 
-                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-light-on-surface/10 hover:bg-light-on-surface/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                @click.stop.prevent="deletePrompt(prompt.id)"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-light-on-surface" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-
-              <NuxtLink :to="`/prompts/${prompt.id}`" class="flex-grow flex flex-col justify-between">
-                <div>
-                  <h3 class="text-light-on-surface font-brand text-2xl leading-tight mb-4">“{{ prompt.prompt }}”</h3>
-                </div>
-                <div class="flex items-center gap-2 mt-4 text-light-on-surface-variant">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span class="text-m font-medium">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
+            <div v-for="prompt in displayedPrompts" :key="prompt.id"
+              class="group relative bg-light-surface-container p-4 rounded-xl border border-light-outline overflow-hidden h-[229px] transition-all duration-300">
+              <!-- Gradient Overlay -->
+              <div
+                class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#FFDCC4] to-transparent pointer-events-none z-20">
+                <div
+                  class="absolute bottom-4 left-0 w-full px-4 flex items-center gap-2 text-light-on-surface-variant z-10">
+                  <span class="material-symbols-outlined text-[20px]">
+                    schedule
+                  </span>
+                  <span class="text-s font-medium tracking-wider">
                     Edited {{ formatTimeAgo(prompt.created_at) }}
                   </span>
+                </div>
+              </div>
+
+              <!-- Delete Button (Hover) -->
+              <button
+                class="absolute top-4 right-4 p-4 rounded-full bg-light-surface-dim flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                @click.stop.prevent="deletePrompt(prompt.id)">
+                <span class="material-symbols-outlined text-light-on-surface text-[16px]">
+                  close
+                </span>
+              </button>
+
+              <NuxtLink :to="`/prompts/${prompt.id}`" class="block relative z-10 h-full">
+                <div class="h-full flex flex-col justify-between">
+                  <h3 class="text-light-on-surface font-brand text-2xl leading-tight mb-4 break-words">"{{
+                    prompt.prompt }}"</h3>
+
+
                 </div>
               </NuxtLink>
             </div>
           </div>
-          
+
           <!-- Show More Button -->
           <div v-if="userPrompts.length > displayLimit" class="flex justify-center mt-8">
-            <button
-              @click="showMore"
-              class="bg-light-primary text-light-on-primary font-bold px-8 py-3 rounded-md text-lg hover:opacity-90 transition-opacity"
-            >
+            <button @click="showMore"
+              class="bg-light-primary text-light-on-primary font-bold px-8 py-3 rounded-md text-lg hover:opacity-90 transition-opacity">
               Show More
             </button>
           </div>
@@ -201,7 +205,7 @@ const confirmDelete = async () => {
 
     // Remove from local state
     userPrompts.value = userPrompts.value.filter(p => p.id !== promptToDeleteId.value);
-    
+
     // Reset state
     promptToDeleteId.value = null;
   } catch (e) {
@@ -213,16 +217,16 @@ const confirmDelete = async () => {
 
 <style scoped>
 .skeleton-shimmer {
-  background: #E3C0A7; /* secondary-80 from palette as base */
-  background-image: linear-gradient(
-    to right,
-    #E3C0A7 0%,
-    #FFDCC4 20%, /* secondary-90 highlight */
-    #E3C0A7 40%,
-    #E3C0A7 100%
-  );
+  background: #E3C0A7;
+  /* secondary-80 from palette as base */
+  background-image: linear-gradient(to right,
+      #E3C0A7 0%,
+      #FFDCC4 20%,
+      /* secondary-90 highlight */
+      #E3C0A7 40%,
+      #E3C0A7 100%);
   background-repeat: no-repeat;
-  background-size: 200% 100%; 
+  background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
 }
 
@@ -230,6 +234,7 @@ const confirmDelete = async () => {
   0% {
     background-position: 100% 0;
   }
+
   100% {
     background-position: -100% 0;
   }

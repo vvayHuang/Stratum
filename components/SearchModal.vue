@@ -1,9 +1,9 @@
 <template>
     <Teleport to="body">
         <div @click="$emit('close')"
-            class="fixed inset-0 z-50 flex items-start justify-center md:items-center bg-light-inverse-surface bg-opacity-95 backdrop-blur-sm">
+            class="fixed inset-0 z-50 flex items-start justify-center bg-light-inverse-surface bg-opacity-95 backdrop-blur-sm">
             <div @click.stop
-                class="w-full max-w-2xl mt-4 mx-4 md:mt-0 overflow-hidden rounded-3xl bg-light-surface-container-high shadow-xl border border-light-outline-variant">
+                class="w-full max-w-2xl mt-4 mx-4 md:mt-20 overflow-hidden rounded-3xl bg-light-surface-container-high shadow-xl border border-light-outline-variant">
                 <!-- Header / Search Bar -->
                 <div class="flex items-center gap-2 p-4 border-b border-light-outline-variant">
                     <button @click="$emit('close')"

@@ -1,22 +1,22 @@
 <template>
   <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-light-surface p-10 rounded-lg shadow-lg text-center relative max-w-lg w-full mx-4">
-      <button @click="closeModal" class="absolute top-2 right-4 text-light-outline hover:text-light-on-surface text-2xl">&times;</button>
-      <h2 class="text-3xl font-bold mb-6 text-light-on-surface">Are you sure you want to delete this idea?</h2>
-      
-      <div class="flex gap-4 justify-center">
-        <button
-          @click="closeModal"
-          class="flex-1 bg-transparent border border-light-outline text-light-on-surface font-bold py-3 px-6 rounded-full hover:bg-light-surface-variant transition-colors"
-        >
+    <div class="flex flex-col items-start text-left bg-light-surface-bright p-6 rounded-[28px] max-w-[312px]">
+      <div class="mb-4 text-light-on-surface-variant">
+        <MaterialIcon name="warning" size="24" />
+      </div>
+      <h2 class="text-1xl font-bold mb-4 font-brand text-light-on-surface leading-tight">Are you sure you want to delete
+        this idea?</h2>
+      <p class="text-light-on-surface-variant mb-8 leading-relaxed">
+        This action cannot be undone. This will permanently delete the idea and remove it from your dashboard.
+      </p>
+
+      <div class="flex gap-3 w-full justify-end">
+        <Button variant="text" customClass="py-2.5 px-6 font-bold" @click="closeModal">
           Cancel
-        </button>
-        <button
-          @click="confirmDelete"
-          class="flex-1 bg-light-error text-light-on-error font-bold py-3 px-6 rounded-full hover:opacity-90 transition-opacity"
-        >
+        </Button>
+        <Button variant="error" customClass="py-2.5 px-6 font-bold" @click="confirmDelete">
           Delete
-        </button>
+        </Button>
       </div>
     </div>
   </div>
@@ -24,6 +24,8 @@
 
 <script setup>
 import { ref } from 'vue';
+import Button from './Button.vue';
+import MaterialIcon from './MaterialIcon.vue';
 
 const isOpen = ref(false);
 const emit = defineEmits(['confirm', 'close']);
@@ -48,5 +50,4 @@ defineExpose({
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

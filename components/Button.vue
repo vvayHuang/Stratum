@@ -18,7 +18,7 @@ const props = defineProps({
     variant: {
         type: String,
         default: 'primary',
-        validator: (value) => ['primary', 'secondary', 'tertiary', 'secondary-container', 'error'].includes(value),
+        validator: (value) => ['primary', 'secondary', 'tertiary', 'secondary-container', 'error', 'text'].includes(value),
     },
     icon: {
         type: String,
@@ -56,6 +56,8 @@ const variantClasses = computed(() => {
             return 'bg-light-secondary-container text-light-on-secondary-container hover:opacity-90';
         case 'error':
             return 'bg-light-error text-light-on-error hover:opacity-90';
+        case 'text':
+            return 'bg-transparent text-light-on-surface-variant hover:bg-light-surface-variant';
         default:
             return 'bg-light-primary text-light-on-primary';
     }

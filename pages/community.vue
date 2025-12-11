@@ -6,8 +6,8 @@
             </div>
         </header>
 
-        <main class="flex-grow mx-auto max-w-[1440px] w-full px-4 md:px-12 py-12">
-            <h1 class="text-4xl lg:text-6xl font-brand text-light-on-surface mb-12">From the Community</h1>
+        <main class="flex-grow mx-auto max-w-[1440px] w-full px-4 md:px-12 py-20">
+            <h1 class="text-4xl lg:text-5xl font-brand text-light-on-surface mb-12">From the Community</h1>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 <CommunityCard v-for="item in prompts" :key="item.id" :item="item" @click="handleCardClick(item)" />
