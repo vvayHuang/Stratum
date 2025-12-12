@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    compatibilityDate: '2025-11-14'
+    compatibilityDate: '2025-12-12'
   },
   runtimeConfig: {
     geminiApiKey: process.env.GEMINI_API_KEY,
