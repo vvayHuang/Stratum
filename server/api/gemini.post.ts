@@ -178,6 +178,27 @@ export default defineEventHandler(async (event) => {
       };
     }
   } else {
+    // Check rate limit: 3 prompts per 24 hours
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count, error: countError } = await adminSupabase
+      .from('prompts')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.sub)
+      .gte('created_at', oneDayAgo);
+
+    if (countError) {
+      console.error('Error checking rate limit:', countError);
+      // Fail open or closed? detailed error helps user understand
+      throw new Error('Failed to verify usage limits.');
+    }
+
+    if (count !== null && count >= 3) {
+      event.node.res.statusCode = 429;
+      return {
+        error: 'You have reached your daily limit of 3 ideas. Please try again tomorrow!',
+      };
+    }
+
     // Existing logic for generating ideas
     const chat = model.startChat({
       history: [

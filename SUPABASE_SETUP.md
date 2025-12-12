@@ -146,13 +146,37 @@ SUPABASE_SERVICE_KEY="your_supabase_service_role_key"
 
 -   **SQL 結構定義：**
     ```sql
-    CREATE TABLE public.steps (
-      id bigserial PRIMARY KEY,
-      report_id bigint REFERENCES public.reports(id) ON DELETE CASCADE,
-      step_number smallint,
-      title text NOT NULL,
-      description text,
       created_at timestamptz NOT NULL DEFAULT now()
     );
     ```
 -   **說明**：每個步驟都透過 `report_id` 與一份報告相關聯，`step_number` 用於排序。
+
+---
+
+## 5. 安全與成本控制 (Safety & Cost Control)
+
+為了防止 API 費用意外暴增，強烈建議您在 Google Cloud Console 進行以下設定。
+
+### 設定 API 配額 (Quotas)
+
+這是最有效的「硬性」限制，一旦超過設定次數，Google 會直接阻擋請求，確保不會產生額外費用。
+
+1.  前往 [Google Cloud Console - Quotas](https://console.cloud.google.com/iam-admin/quotas)。
+2.  在篩選器中輸入 **"Generative Language API"**。
+3.  找到相關的配額項目，例如 **"Requests per minute"** (每分鐘請求數) 或 **"Requests per day"** (每日請求數)。
+    *   *注意：具體名稱可能會隨 Google 更新而變動，請尋找與 request count 相關的項目。*
+4.  勾選該項目，點擊右上角的 **EDIT QUOTAS**。
+5.  將數值設定為一個保守的安全值。例如，對於作品集網站，您可以設定：
+    *   **Requests per day**: 50 ~ 100 (足夠讓您和面試官測試，但能防止被惡意刷單)。
+
+### 設定預算通知 (Budgets & Alerts)
+
+這不會自動停止服務，但會在費用快要超過預算時發送 Email 通知您。
+
+1.  前往 [Google Cloud Console - Budgets](https://console.cloud.google.com/billing/budgets)。
+2.  點擊 **CREATE BUDGET**。
+3.  **Name**: 輸入一個名稱，例如 "SideBling Safety Budget"。
+4.  **Amount**: 設定您的月預算上限，例如 **$10 USD** (或您願意的最小金額)。
+5.  **Actions**: 預設會設定在已用 50%, 90%, 100% 時通知您。保留預設即可。
+6.  勾選 **"Email alerts to billing admins and users"**。
+7.  點擊 **FINISH**。
