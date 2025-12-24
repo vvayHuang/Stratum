@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div v-if="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div class="flex flex-col items-start text-left bg-light-surface-bright p-6 rounded-[28px] max-w-[312px]">
       <div class="mb-4 text-light-on-surface-variant">
         <MaterialIcon name="warning" size="24" />

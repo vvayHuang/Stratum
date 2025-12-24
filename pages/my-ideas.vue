@@ -53,14 +53,9 @@
               </div>
 
               <!-- Delete Button (Hover) -->
-              <button
-                class="absolute top-4 right-4 p-4 rounded-full bg-light-surface-dim flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20"
-                @click.stop.prevent="deletePrompt(prompt.id)">
-                <span class="material-symbols-outlined text-light-on-surface text-[16px]">
-                  close
-                </span>
-              </button>
-
+              <IconButton @click.stop.prevent="deletePrompt(prompt.id)" name="close"
+                custom-class="absolute top-4 right-4 rounded-full bg-light-surface-dim opacity-0 group-hover:opacity-100 z-20 cursor-pointer border-0 transition-colors">
+              </IconButton>
               <NuxtLink :to="`/prompts/${prompt.id}`" class="block relative z-10 h-full">
                 <div class="h-full flex flex-col justify-between">
                   <h3 class="text-light-on-surface font-brand text-2xl leading-tight mb-4 break-words">"{{
@@ -92,7 +87,7 @@
 import { ref, computed, watch } from 'vue';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import Navbar from '~/components/Navbar.vue';
-// import LoginModal from '~/components/LoginModal.vue';
+import IconButton from '~/components/IconButton.vue';
 import DeleteConfirmationModal from '~/components/DeleteConfirmationModal.vue';
 
 definePageMeta({
@@ -118,17 +113,14 @@ const showMore = () => {
 };
 
 const fetchUserPrompts = async () => {
-  console.log('fetchUserPrompts called. user.value:', user.value);
   const userId = user.value?.id || user.value?.sub; // Get the correct user ID
   if (!user.value || !userId) { // Check for user.value or userId
     error.value = 'User not logged in or user ID not available.';
     isLoading.value = false;
-    console.log('fetchUserPrompts: User not available, isLoading set to false.');
     return;
   }
 
   try {
-    console.log('fetchUserPrompts: Fetching prompts for user ID:', userId);
     const { data, error: fetchError } = await supabase
       .from('prompts')
       .select(`
@@ -147,24 +139,20 @@ const fetchUserPrompts = async () => {
       throw fetchError;
     }
     userPrompts.value = data;
-    console.log('fetchUserPrompts: Prompts fetched, count:', userPrompts.value.length);
   } catch (e) {
     console.error('Error fetching user prompts:', e);
     error.value = e.message;
   } finally {
     isLoading.value = false;
-    console.log('fetchUserPrompts: Finished, isLoading set to false.');
   }
 };
 
 
 
 watch(user, (newUser) => {
-  console.log('User watch triggered. newUser:', newUser);
   if (newUser && (newUser.id || newUser.sub)) { // Check for newUser.id or newUser.sub
     fetchUserPrompts();
   } else {
-    console.log('User watch: newUser not available or no ID.');
     isLoading.value = false; // Ensure isLoading is false if user is not logged in
   }
 }, { immediate: true }); // immediate: true to run once on component setup if user is already available

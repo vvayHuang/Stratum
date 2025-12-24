@@ -1,26 +1,22 @@
+import tailwindcss from "@tailwindcss/vite";
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase'],
+  modules: ['@nuxtjs/supabase', '@nuxtjs/google-fonts'],
   css: ['~/assets/css/tailwind.css'],
   app: {
     head: {
       title: 'Stratum - Career Insights',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0' }
       ]
     }
   },
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  },
   nitro: {
     compatibilityDate: '2025-12-12'
+  },
+  vite: {
+    plugins: [tailwindcss()],
   },
   runtimeConfig: {
     geminiApiKey: process.env.GEMINI_API_KEY,
@@ -31,5 +27,12 @@ export default defineNuxtConfig({
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
     redirect: false
+  },
+  googleFonts: {
+    families: {
+      'DM Serif Display': true,
+      'Roboto': true,
+      'Material Symbols Outlined': true
+    }
   }
 })

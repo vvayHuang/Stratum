@@ -1,6 +1,6 @@
 <template>
     <button :class="[
-        'flex items-center justify-center gap-3 rounded-full  transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+        'flex items-center justify-center gap-3 rounded-full  transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer',
         variantClasses,
         customClass
     ]" :disabled="disabled" @click="$emit('click')">
@@ -18,7 +18,7 @@ const props = defineProps({
     variant: {
         type: String,
         default: 'primary',
-        validator: (value) => ['primary', 'secondary', 'tertiary', 'secondary-container', 'error', 'text'].includes(value),
+        validator: (value) => ['primary', 'secondary', 'tertiary', 'secondary-container', 'error', 'text', 'outline'].includes(value),
     },
     icon: {
         type: String,
@@ -58,6 +58,8 @@ const variantClasses = computed(() => {
             return 'bg-light-error text-light-on-error hover:opacity-90';
         case 'text':
             return 'bg-transparent text-light-on-surface-variant hover:bg-light-surface-variant';
+        case 'outline':
+            return 'border border-light-outline/20 bg-light-surface text-light-on-surface-variant hover:bg-light-surface/50 transition-colors';
         default:
             return 'bg-light-primary text-light-on-primary';
     }

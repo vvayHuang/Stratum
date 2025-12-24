@@ -1,30 +1,27 @@
 <template>
     <Teleport to="body">
         <div @click="$emit('close')"
-            class="fixed inset-0 z-50 flex items-start justify-center bg-light-inverse-surface bg-opacity-95 backdrop-blur-sm">
+            class="fixed inset-0 z-50 flex items-start justify-center bg-light-inverse-surface/95 backdrop-blur-sm">
             <div @click.stop
                 class="w-full max-w-2xl mt-4 mx-4 md:mt-20 overflow-hidden rounded-3xl bg-light-surface-container-high shadow-xl border border-light-outline-variant">
                 <!-- Header / Search Bar -->
                 <div class="flex items-center gap-2 p-4 border-b border-light-outline-variant">
-                    <button @click="$emit('close')"
-                        class="p-2 rounded-full hover:bg-light-on-surface hover:bg-opacity-10 transition-colors text-light-on-surface">
-                        <MaterialIcon name="arrow_back" class="text-2xl" />
-                    </button>
+                    <IconButton @click="$emit('close')" name="arrow_back"
+                        custom-class="border-0 hover:bg-light-primary/10 transition-colors">
+                    </IconButton>
 
                     <input ref="searchInput" v-model="searchQuery" type="text" placeholder="Search prompts..."
                         class="flex-grow bg-transparent text-xl text-light-on-surface placeholder-light-on-surface-variant focus:outline-none"
                         @input="handleInput" @keydown.esc="$emit('close')" />
-
-                    <button v-if="searchQuery" @click="clearSearch"
-                        class="p-2 rounded-full hover:bg-light-on-surface hover:bg-opacity-10 transition-colors text-light-on-surface">
-                        <MaterialIcon name="close" class="text-2xl" />
-                    </button>
+                    <IconButton v-if="searchQuery" @click="clearSearch" name="close"
+                        custom-class="border-0 hover:bg-light-primary/10 transition-colors">
+                    </IconButton>
                 </div>
 
                 <!-- Body / List Items -->
                 <div v-if="results.length > 0" class="p-0">
                     <div v-for="(item, index) in results" :key="item.id || index" @click="handleResultClick(item)"
-                        class="flex items-center gap-4 p-4 hover:bg-light-on-surface hover:bg-opacity-5 cursor-pointer border-b border-light-outline-variant last:border-b-0">
+                        class="flex items-center gap-4 p-4  hover:bg-light-primary/5 cursor-pointer border-b border-light-outline-variant last:border-b-0">
                         <div
                             class="flex-shrink-0 w-10 h-10 rounded-full bg-light-tertiary-container flex items-center justify-center text-light-on-tertiary-container font-medium overflow-hidden">
                             <img v-if="item.user?.avatar_url" :src="item.user.avatar_url" :alt="item.user.full_name"
@@ -52,6 +49,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useSupabaseClient, useRouter } from '#imports';
+import IconButton from './IconButton.vue';
 
 const emit = defineEmits(['close']);
 const searchQuery = ref('');

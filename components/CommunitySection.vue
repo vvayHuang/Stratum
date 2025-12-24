@@ -35,10 +35,7 @@
 
     <!-- Show More -->
     <div v-if="hasMore" class="flex justify-center">
-      <button @click="showMore"
-        class="px-6 py-3 rounded-full border border-light-outline/20 bg-light-surface/30 text-sm font-medium text-light-on-surface-variant hover:bg-light-surface/50 transition-colors">
-        Show more
-      </button>
+      <Button @click="showMore" variant="outline" customClass="px-6 py-3 text-sm font-medium">Show more</Button>
     </div>
   </div>
 </template>
@@ -47,6 +44,7 @@
 import { ref, computed } from 'vue';
 import gsap from 'gsap';
 import CommunityCard from '~/components/CommunityCard.vue';
+import Button from './Button.vue';
 
 const container = ref(null);
 

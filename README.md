@@ -1,46 +1,54 @@
-# Stratum - AI Career Advisor
+# Stratum - AI 職涯顧問 (AI Career Advisor)
 
-This is a Nuxt.js v3 project that serves as an AI-powered career advisor. It leverages the Google Gemini API to generate creative career ideas based on user interests. The project uses Tailwind CSS for styling, GSAP for animations, and is integrated with Supabase for user authentication (Google OAuth) and database storage.
+這是一個基於 Nuxt 4 構建的 AI 職涯顧問專案。它利用 Google Gemini API 根據使用者的興趣生成創意的職涯想法。專案使用 Tailwind CSS v4 進行樣式設計，GSAP 處理動畫效果，並整合了 Supabase 用於使用者身份驗證（Google OAuth）與資料庫儲存。
 
-## Key Features
+## 主要功能
 
-- **AI-Powered Suggestions**: Enter a hobby or interest, and the Gemini API will generate three potential career paths.
-- **Detailed Guides**: Select an idea to generate a full step-by-step guide, including earnings potential and a competitive score.
-- **Community Page**: Browse a gallery of prompts and ideas shared by the entire community.
-- **Personal Idea Management**: Logged-in users can manage their own prompts and generated guides in a dedicated "My Ideas" section.
-- **Search and Delete**: Users can search for specific prompts and delete their own contributions.
-- **Supabase Integration**: Handles user accounts, Google OAuth, and persists all user interactions, ideas, and generated guides in a PostgreSQL database.
-- **Material Design 3 Theme**: The entire UI has been updated with a comprehensive, semantic color palette based on Material Design 3, configured in `tailwind.config.cjs`.
+- **AI 驅動建議**：輸入愛好或興趣，Gemini API 會生成三條潛在的職涯路徑。
+- **詳細指南**：選擇一個想法即可生成完整的步驟指南，包括收入潛力與競爭力評分。
+- **社群頁面**：瀏覽由社群分享的所有提示詞與創意畫廊。
+- **個人想法管理**：登入後的使用者可以在「我的想法」專區管理自己的提示詞與生成的指南。
+- **搜尋與刪除**：使用者可以搜尋特定的提示詞，並刪除自己提交的內容。
+- **Supabase 整合**：處理使用者帳號、Google OAuth 登入，並將所有互動資料、想法與指南持久化儲存於 PostgreSQL 資料庫。
+- **Material Design 3 主題**：全介面採用基於 Material Design 3 的語義化色彩系統，並在 `tailwind.config.cjs` 中配置。
+
+## 技術棧與 Nuxt 模組 (Tech Stack & Modules)
+
+本專案採用 Nuxt 4 生態系中的多項現代化模組，以確保應用的效能與安全性：
+
+- **Nuxt v4**: 核心全端框架，支援 SSR、自動化路由與 Nitro 後端引擎。
+- **Tailwind CSS v4**: 使用最新的 `@tailwindcss/vite` 整合，提供極速的 CSS 建置與強大的樣式功能。
+- **@nuxtjs/supabase**: 負責使用者登入 (Google OAuth) 與資料庫 (PostgreSQL) 的即時連動與安全性設定。
+- **@nuxtjs/google-fonts**: 優化字體載入流程，確保品牌字體能流暢且高效地在瀏覽器中顯示。
+- **GSAP**: 用於實現高品質的 UI 動畫特效，提升使用者互動體驗。
+- **Google Generative AI SDK**: 官方 SDK，連結 Gemini 2.5 Flash 模型，將使用者的創意轉化為具體的職涯建議。
 
 ## 架構概觀
 
-本專案為一個全端應用程式，基於 Nuxt 3 框架打造，充分利用其強大的伺服器端渲染 (SSR) 與 API 端點建立功能。
+本專案為一個全端應用程式，基於 Nuxt 4 框架打造，充分利用其強大的伺服器端渲染 (SSR) 與 API 端點建立功能。
 
--   **前端 (Frontend)**：使用者介面採用 Vue 3 建構，並透過 `pages/` 目錄中的檔案結構來定義路由。這包括了首頁 (`/`)、展示社群創意的社群頁面 (`/community`)、一個受保護的使用者個人想法頁面 (`/my-ideas`)，以及用於顯示特定提示詞內容的動態路由 (`/prompts/:id`)。可重用的 UI 元素（如導覽列、搜尋彈窗、刪除確認彈窗等）被組織在 `components/` 目錄下的 Vue 元件中。專案的整體視覺風格由 Tailwind CSS 管理，並在 `tailwind.config.cjs` 中配置了自訂的 Material Design 3 色彩主題。
+- **前端 (Frontend)**：使用者介面採用 Vue 3 建構。路由包括首頁 (`/`)、社群頁面 (`/community`)、受保護的使用者想法頁面 (`/my-ideas`)，以及特定提示詞的動態路由 (`/prompts/:id`)。UI 元件（如導覽列、搜尋彈窗等）位於 `components/` 目錄下。
+- **後端 (Backend)**：後端邏輯封裝在 `server/api/gemini.post.ts` 中。此端點負責與 Google Gemini API 通訊及 Supabase 資料庫互動，確保 API 金鑰的安全性。
+- **資料庫 (Database)**：資料由 Supabase 管理。結構定義在 `types/database.types.ts` 中。主要資料表包括 `users`、`prompts`、`ideas`、`reports` 和 `steps`。
+- **身份驗證 (Authentication)**：透過 `@nuxtjs/supabase` 模組處理，支援 Google OAuth 登入，並使用 `middleware/auth.js` 保護專屬頁面。
 
--   **後端 (Backend)**：後端邏輯被封裝在位於 `server/api/gemini.post.ts` 的單一無伺服器 API 路由中。此端點負責與 Google Gemini API 的所有通訊以及與 Supabase 資料庫的互動。它安全地處理 API 金鑰，接收來自客戶端的請求（包括生成想法、生成指南、搜尋、刪除），為 AI 模型建構請求，並在將結果回傳給前端之前進行處理。
+## 快速開始
 
--   **資料庫 (Database)**：資料持久化由 Supabase 管理，它提供了一個 PostgreSQL 資料庫和自動生成的 API。資料庫的結構定義在 `types/database.types.ts` 中，其設計旨在儲存使用者資訊、提示、由 AI 生成的想法、詳細報告以及可執行的步驟。關鍵的資料表包括 `users`、`prompts`、`ideas`、`reports` 和 `steps`，它們以關聯式結構相互連結。
+1. **安裝依賴項**：
+   ```bash
+   npm install
+   ```
 
--   **身份驗證 (Authentication)**：使用者身份驗證是透過 `@nuxtjs/supabase` 模組處理，提供了與 Supabase Auth 的無縫整合，並支援 Google OAuth 以便於登入。`components/LoginModal.vue` 元件提供了身份驗證的使用者介面，而 `middleware/auth.js` 路由中介軟體則透過確保只有經過身份驗證的使用者才能存取 `/my-ideas` 頁面來保護使用者資料。
+2. **設定環境變數**：
+   您需要為 Gemini API 和 Supabase 設定憑證。
+   ```bash
+   cp .env.example .env
+   ```
+   在生成的 `.env` 檔案中填寫必要的值。詳細說明請參考 `GEMINI_API_KEY.md` 和 `SUPABASE_SETUP.md`。
 
-## Quick Start
+3. **啟動開發伺服器**：
+   ```bash
+   npm run dev
+   ```
 
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-
-2.  **Set Up Environment Variables**:
-    You will need to set up credentials for both the Gemini API and Supabase.
-    ```bash
-    cp .env.example .env
-    ```
-    Fill in the required values in the newly created `.env` file. For detailed instructions, please refer to `GEMINI_API_KEY.md` and `SUPABASE_SETUP.md`.
-
-3.  **Run the Development Server**:
-    ```bash
-    npm run dev
-    ```
-
-The application will be available at `http://localhost:3000`.
+應用程式將在 `http://localhost:3000` 啟動。

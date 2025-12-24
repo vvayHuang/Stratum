@@ -19,7 +19,7 @@
       <!-- Desktop Navigation -->
       <nav class="hidden lg:flex gap-8 items-center">
         <NuxtLink to="/community" class="font-medium text-m">Community</NuxtLink>
-        <button @click="isSearchModalOpen = true" class="font-medium text-m">Search</button>
+        <button @click="isSearchModalOpen = true" class="font-medium text-m cursor-pointer">Search</button>
       </nav>
     </div>
 
@@ -30,7 +30,8 @@
       <div class="flex items-center">
         <!-- Authenticated State -->
         <div v-if="user" class="relative">
-          <button ref="dropdownButtonRef" @click="isDropdownOpen = !isDropdownOpen" class="flex items-center gap-2">
+          <button ref="dropdownButtonRef" @click="isDropdownOpen = !isDropdownOpen"
+            class="flex items-center gap-2 cursor-pointer">
             <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
             <span class="hidden font-medium lg:block text-m">{{ user.user_metadata.full_name }}</span>
           </button>
