@@ -43,7 +43,7 @@
           </p>
 
           <button @click="signInWithGoogle"
-            class="w-full flex items-center justify-center gap-3 bg-light-secondary-container hover:bg-light-secondary-container/80 transition-colors text-light-on-secondary-container font-medium py-3 px-6 rounded-full mb-8 lg:mb-0">
+            class="w-full flex items-center justify-center gap-3 bg-light-secondary-container hover:bg-light-secondary-container/80 transition-colors text-light-on-secondary-container font-medium py-3 px-6 rounded-full mb-8 lg:mb-0 cursor-pointer">
             <img src="/assets/google-g-logo.svg" alt="Google" class="w-5 h-5" />
             Sign in With Google
           </button>
