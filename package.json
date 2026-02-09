@@ -11,6 +11,7 @@
     "@google/generative-ai": "^0.24.1",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/supabase": "^2.0.3",
+    "@paper-design/shaders": "^0.0.71",
     "@supabase/supabase-js": "^2.81.1",
     "@tailwindcss/vite": "^4.1.18",
     "gsap": "^3.13.0",

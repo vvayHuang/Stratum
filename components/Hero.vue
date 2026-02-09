@@ -1,8 +1,11 @@
 <template>
   <div>
     <div v-if="!isLoading" ref="heroContainer"
-      class="w-full h-[calc(100vh-72px)] flex flex-col justify-center items-center custom-gradient">
-      <div class="flex flex-col items-center gap-8 w-full max-w-[800px] px-4">
+      class="w-full h-screen flex flex-col justify-center items-center relative overflow-hidden isolate">
+      <ClientOnly>
+        <MeshGradientBackground :distortion="0.8" :swirl="0.1" :grainMixer="0" :grainOverlay="0" />
+      </ClientOnly>
+      <div class="flex flex-col items-center gap-8 w-full max-w-[800px] px-4 relative z-10">
         <h1 class="font-brand text-4xl leading-3xl text-light-on-secondary-container lg:text-center">
           Dive In: Discover Your Next Big Idea!
         </h1>
@@ -40,6 +43,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import gsap from "gsap";
+import MeshGradientBackground from "./MeshGradientBackground.vue";
 
 const heroContainer = ref(null);
 
@@ -121,6 +125,8 @@ onUnmounted(() => {
   if (typeTimeout) clearTimeout(typeTimeout);
 });
 
+
+
 defineExpose({ playHeroAnimation, resetAnimation });
 </script>
 
@@ -160,17 +166,5 @@ defineExpose({ playHeroAnimation, resetAnimation });
   100% {
     background-position: -100% 0;
   }
-}
-
-.custom-gradient {
-  background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 183, 128, 1) 50%,
-      /* primary-80 #FFB780 */
-      rgba(198, 165, 142, 1) 75%,
-      /* secondary-70 #C6A58E */
-      rgba(144, 148, 101, 1) 100%
-      /* tertiary-60 #909465 */
-    );
 }
 </style>

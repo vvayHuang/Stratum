@@ -1,9 +1,6 @@
 <template>
   <div class="min-h-screen bg-light-surface text-light-on-surface flex flex-col">
-    <!-- Loading Overlay Removed -->
-    <!-- <div v-if="isLoading" class="fixed inset-0 bg-light-surface flex flex-col items-center justify-center z-50"> ... </div> -->
-
-    <header class="sticky top-0 z-50 bg-light-surface/80 backdrop-blur-md border-light-outline-variant">
+    <header class="fixed w-full top-0 z-50 backdrop-blur-md border-light-outline-variant">
       <div class="mx-auto max-w-[1440px] lg:px-6 flex items-center justify-between">
         <Navbar />
       </div>
@@ -17,31 +14,23 @@
         </div>
       </div>
 
-
       <div class="mx-auto max-w-[1440px] px-4 md:px-12 py-6 w-full lg:my-20">
         <CommunitySection ref="communitySection" :prompts="recentPrompts" :isLoading="isFetchingPrompts"
           @prompt-click="(promptText, promptId) => router.push(`/prompts/${promptId}`)" />
       </div>
-
-
-
-      <Footer />
-
     </main>
 
-
+    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
-import { useRouter } from 'vue-router'; // Import useRouter
-import { useSupabaseUser, useSupabaseClient } from '#imports';
-import gsap from "gsap";
+import { ref, onMounted } from "vue";
+import { useRouter } from 'vue-router';
+import { useSupabaseClient } from '#imports';
 import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import CommunitySection from "~/components/CommunitySection.vue";
-import Cards from "~/components/Cards.vue";
 import Footer from "~/components/Footer.vue";
 import type { Database } from '~/types/database.types';
 
@@ -49,12 +38,9 @@ definePageMeta({
   layout: false
 });
 
-const user = useSupabaseUser();
-const router = useRouter(); // Initialize router
-const cardsComponent = ref(null);
+const router = useRouter();
 const heroComponent = ref(null);
 const communitySection = ref(null);
-// const loginModal = ref(null);
 const isLoading = ref(false);
 
 const recentPrompts = ref([]);
@@ -97,25 +83,17 @@ onMounted(async () => {
   }
 });
 
-// watchEffect(() => {
-//   if (user.value && loginModal.value) {
-//     loginModal.value.closeModal();
-//   }
-// });
-
 const handleShowMoney = async (p) => {
   console.log("handleShowMoney called!");
 
   const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
   const communityAnim = communitySection.value ? communitySection.value.animateOut() : null;
-  // const cardsAnim = cardsComponent.value ? cardsComponent.value.playCardsAnimation() : null;
 
   try {
     // Wait for animations to complete before showing skeleton (isLoading = true)
     await Promise.all([
       heroAnim ? heroAnim : Promise.resolve(),
       communityAnim ? communityAnim : Promise.resolve(),
-      // cardsAnim ? cardsAnim : Promise.resolve(),
     ]);
 
     isLoading.value = true; // Show skeleton now
@@ -164,7 +142,7 @@ const handleShowMoney = async (p) => {
       isLoading.value = false;
     }
 
-  } catch (e) {
+  } catch (e: any) {
     console.error("Error in handleShowMoney:", e);
     // If something fails, reset the loading state so the user isn't stuck
     isLoading.value = false;

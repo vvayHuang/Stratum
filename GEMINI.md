@@ -23,6 +23,7 @@
 - **`@nuxtjs/google-fonts`**：自動化下載與載入 Google 字體，減少排版閃爍並提升載入效能。
 - **`@nuxtjs/tailwindcss` & `@tailwindcss/vite`**：專為 Nuxt 4 與 Tailwind CSS v4 設計的建置工具，提供極速的開發編譯體驗與現代化樣式支援。
 - **`GSAP (GreenSock)`**：業界標準的動畫庫，負責處理介面元件的進出場動畫。
+- **`@paper-design/shaders`**：提供高效能的 Shader 效果，用於提升網頁的視覺張力與動態質感（如 Mesh Gradient）。
 - **`@google/generative-ai`**：官方 Gemini SDK，用於後端與 AI 模型進行結構化提示 (Prompting) 與回應處理。
 
 # 建置與運行
@@ -65,6 +66,8 @@
 # 開發慣例
 
 - **樣式**：專案使用 Tailwind CSS v4。實用程式類別應直接在 Vue 元件中用於樣式設計。
+- **佈局結構**：遵循語義化 HTML 規範。例如，`Footer` 應置於 `main` 標籤之外，以確保頁面結構清晰。
+- **代碼品質**：近期對首頁 (`index.vue`) 進行了優化，移除了未使用的組件引用（如 `Cards.vue`）、過時的註解代碼（如 Loading Overlay）以及冗餘的導入（如 `gsap`、`watchEffect`），並修正了生命週期鉤子 (`onMounted`) 的正確引用。
 - **色彩主題**：專案採用了基於 Material Design 3 的語義化色彩系統。所有顏色變數都在 `tailwind.config.cjs` 中定義。開發時應優先使用這些語義化名稱（例如 `bg-light-primary`），而不是寫死的色碼。
 - **身份驗證**：身份驗證由 `@nuxtjs/supabase` 模組處理。`Navbar.vue` 等 UI 元件使用組合式函數來管理使用者狀態。
 - **錯誤處理**：當 API 發生錯誤時，UI 會提供美化的錯誤訊息，並提供使用者返回初始狀態的選項。

@@ -12,6 +12,15 @@
 - **Supabase 整合**：處理使用者帳號、Google OAuth 登入，並將所有互動資料、想法與指南持久化儲存於 PostgreSQL 資料庫。
 - **Material Design 3 主題**：全介面採用基於 Material Design 3 的語義化色彩系統，並在 `tailwind.config.cjs` 中配置。
 
+## 最近改進 (Recent Improvements)
+
+- **首頁結構優化**：重構 `index.vue` 的模板結構，將 `Footer` 移至 `main` 標籤外，提升 HTML 語義化。
+- **代碼清理與效能提升**：
+    - 移除了未使用的 `Cards.vue` 組件引用與相關動畫邏輯。
+    - 清理了冗餘的 `gsap`、`watchEffect` 與 `useSupabaseUser` 導入。
+    - 刪除了模板中過時的 Loading Overlay 註解代碼，保持代碼整潔。
+    - 修正了 `onMounted` 生命週期鉤子的引用錯誤，確保組件初始化邏輯正確執行。
+
 ## 技術棧與 Nuxt 模組 (Tech Stack & Modules)
 
 本專案採用 Nuxt 4 生態系中的多項現代化模組，以確保應用的效能與安全性：
@@ -21,6 +30,7 @@
 - **@nuxtjs/supabase**: 負責使用者登入 (Google OAuth) 與資料庫 (PostgreSQL) 的即時連動與安全性設定。
 - **@nuxtjs/google-fonts**: 優化字體載入流程，確保品牌字體能流暢且高效地在瀏覽器中顯示。
 - **GSAP**: 用於實現高品質的 UI 動畫特效，提升使用者互動體驗。
+- **@paper-design/shaders**: 整合現代化 Shader 視覺特效，為應用程式增添獨特的背景動態與質感。
 - **Google Generative AI SDK**: 官方 SDK，連結 Gemini 2.5 Flash 模型，將使用者的創意轉化為具體的職涯建議。
 
 ## 架構概觀
