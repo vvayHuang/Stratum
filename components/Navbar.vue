@@ -19,7 +19,9 @@
       <!-- Desktop Navigation -->
       <nav class="hidden lg:flex gap-8 items-center">
         <NuxtLink to="/community" class="font-medium text-m">Community</NuxtLink>
-        <button @click="isSearchModalOpen = true" class="font-medium text-m cursor-pointer">Search</button>
+        <button @click="isSearchModalOpen = true"
+          class="font-medium text-m cursor-pointer flex items-center gap-2">Search<span
+            class="text-light-on-surface/50"><kbd>⌘K</kbd></span></button>
       </nav>
     </div>
 

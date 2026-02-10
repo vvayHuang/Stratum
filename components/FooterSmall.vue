@@ -12,7 +12,7 @@
       </div>
 
       <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
-        <a href="#" class="flex gap-1 hover:opacity-80 transition-opacity group">
+        <a href="https://x.com/" class="flex gap-1 hover:opacity-80 transition-opacity group">
           X
           <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"
             class="opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
@@ -20,7 +20,7 @@
               stroke-linejoin="round" />
           </svg>
         </a>
-        <a href="#" class="flex gap-1 hover:opacity-80 transition-opacity group">
+        <a href="https://www.instagram.com/____cychen/" class="flex gap-1 hover:opacity-80 transition-opacity group">
           INSTAGRAM
           <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"
             class="opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
@@ -28,8 +28,9 @@
               stroke-linejoin="round" />
           </svg>
         </a>
-        <a href="#" class="flex gap-1 hover:opacity-80 transition-opacity group">
-          LEGAL
+        <a href="https://www.youtube.com/watch?v=h1BJDddNVLA"
+          class="flex gap-1 hover:opacity-80 transition-opacity group">
+          YOUTUBE
           <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"
             class="opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
             <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
