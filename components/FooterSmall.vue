@@ -20,7 +20,7 @@
               stroke-linejoin="round" />
           </svg>
         </a>
-        <a href="https://www.instagram.com/____cychen/" class="flex gap-1 hover:opacity-80 transition-opacity group">
+        <a href="https://www.instagram.com/" class="flex gap-1 hover:opacity-80 transition-opacity group">
           INSTAGRAM
           <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"
             class="opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
