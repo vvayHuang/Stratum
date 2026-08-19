@@ -15,13 +15,16 @@
     "@supabase/supabase-js": "^2.81.1",
     "@tailwindcss/vite": "^4.1.18",
     "gsap": "^3.13.0",
-    "nuxt": "^4.2.2"
+    "nuxt": "^4.5.2"
   },
   "devDependencies": {
     "@nuxt/devtools": "^3.1.1",
-    "@nuxtjs/tailwindcss": "^6.14.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^4.1.18"
+  },
+  "optionalDependencies": {
+    "@oxc-parser/binding-linux-x64-gnu": "0.133.0",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.3"
   }
 }
