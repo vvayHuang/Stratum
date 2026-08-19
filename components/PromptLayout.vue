@@ -242,14 +242,13 @@ const generateGuide = async () => {
   // Actually, while generating, the block is replaced by the spinner, so it's fine.
 
   try {
-    const res = await fetch("/api/gemini", {
+    const res = await fetch("/api/guide", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        generateGuide: true,
-        idea: currentIdea.value,
+        ideaId: currentIdea.value.id,
       }),
     });
 

@@ -17,6 +17,14 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: [
+        '@paper-design/shaders',
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        'gsap',
+      ]
+    }
   },
   runtimeConfig: {
     geminiApiKey: process.env.GEMINI_API_KEY,

@@ -43,5 +43,5 @@
 </template>
 
 <script setup>
-import backgroundImage from '~/assets/background-Image.png';
+import backgroundImage from '~/assets/background-Image.webp';
 </script>

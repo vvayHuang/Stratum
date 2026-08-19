@@ -3,7 +3,7 @@
     <!-- Background Image -->
     <!-- Mobile: Absolute full screen. Desktop: Right 50% -->
     <div class="absolute inset-0 z-0 lg:static lg:w-1/2 lg:order-2 lg:block">
-      <img src="~/assets/background-Image.png" alt="Background" class="w-full h-full object-cover" />
+      <img src="~/assets/background-Image.webp" alt="Background" class="w-full h-full object-cover" />
     </div>
 
     <!-- Mobile Logo: Top Left -->

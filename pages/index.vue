@@ -84,8 +84,6 @@ onMounted(async () => {
 });
 
 const handleShowMoney = async (p) => {
-  console.log("handleShowMoney called!");
-
   const heroAnim = heroComponent.value ? heroComponent.value.playHeroAnimation() : null;
   const communityAnim = communitySection.value ? communitySection.value.animateOut() : null;
 
@@ -104,7 +102,7 @@ const handleShowMoney = async (p) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-    const res = await fetch("/api/gemini", {
+    const res = await fetch("/api/ideas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +120,6 @@ const handleShowMoney = async (p) => {
     }
 
     const data = await res.json();
-    console.log("API Response:", data); // Debug log
 
     if (data.error) {
       throw new Error(data.error);
@@ -130,7 +127,6 @@ const handleShowMoney = async (p) => {
     const newPromptId = data.promptId;
 
     if (newPromptId) {
-      console.log("Navigating to:", `/prompts/${newPromptId}`);
       try {
         await router.push(`/prompts/${newPromptId}`);
       } catch (navError) {
