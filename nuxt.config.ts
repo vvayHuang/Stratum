@@ -1,7 +1,40 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineNuxtConfig } from 'nuxt/config'
 
+const supabaseOrigin = process.env.SUPABASE_URL?.replace(/\/+$/, '') ?? ''
+const supabaseSocket = supabaseOrigin.replace(/^https:/, 'wss:')
+
+// 只在 production 套用 CSP：dev 的 HMR 需要 eval 與 ws://localhost。
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  // Nuxt 會 inline hydration script；Tailwind 與 GSAP 會寫入 inline style。
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  // 使用者頭像來自 Google 的 CDN。
+  "img-src 'self' data: blob: https:",
+  ["connect-src 'self'", supabaseOrigin, supabaseSocket].filter(Boolean).join(' '),
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+].join('; ')
+
+const securityHeaders: Record<string, string> = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  ...(process.env.NODE_ENV === 'production'
+    ? { 'Content-Security-Policy': contentSecurityPolicy }
+    : {}),
+}
+
 export default defineNuxtConfig({
+  routeRules: {
+    '/**': { headers: securityHeaders },
+  },
   modules: ['@nuxtjs/supabase', '@nuxtjs/google-fonts'],
   css: ['~/assets/css/tailwind.css'],
   app: {

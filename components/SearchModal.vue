@@ -78,6 +78,15 @@ const performSearch = async () => {
         return;
     }
 
+    // 使用者輸入會直接變成 LIKE pattern，先把萬用字元拿掉 ——
+    // 否則輸入一個 % 就是對整張表做全表掃描。
+    const term = searchQuery.value.trim().replace(/[%_*\\]/g, ' ');
+    if (!term.trim()) {
+        results.value = [];
+        loading.value = false;
+        return;
+    }
+
     try {
         const { data, error } = await client
             .from('prompts')
@@ -86,7 +95,7 @@ const performSearch = async () => {
         prompt,
         user:users(full_name, avatar_url)
       `)
-            .ilike('prompt', `%${searchQuery.value}%`)
+            .ilike('prompt', `%${term}%`)
             .limit(5); // Limit results for performance
 
         if (error) {

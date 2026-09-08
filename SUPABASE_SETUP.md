@@ -30,11 +30,11 @@ SUPABASE_URL="your_supabase_project_url"
 # Supabase 公開金鑰 (anon public key)
 SUPABASE_KEY="your_supabase_anon_public_key"
 
-# Supabase 服務金鑰 (service_role secret key)
-SUPABASE_SERVICE_KEY="your_supabase_service_role_key"
+# Supabase 服務金鑰 (service_role secret key) —— 只在伺服器端使用，絕不可外流
+SUPABASE_SECRET_KEY="your_supabase_service_role_key"
 ```
 
--   `SUPABASE_URL` 和 `SUPABASE_KEY` / `SUPABASE_SERVICE_KEY` 可以在 Supabase 儀表板的 **Settings > API** 中找到。
+-   `SUPABASE_URL` 和 `SUPABASE_KEY` / `SUPABASE_SECRET_KEY` 可以在 Supabase 儀表板的 **Settings > API** 中找到。
 
 ---
 
@@ -101,12 +101,10 @@ SUPABASE_SERVICE_KEY="your_supabase_service_role_key"
     ```
 -   **說明**：`response` 欄位儲存了從 Gemini API 收到的原始 JSON 回應（包含多個想法）。
 
--   **行級安全性 (Row Level Security - RLS)**：為了保護使用者資料，同時允許在首頁公開展示提示詞，`prompts` 資料表啟用了 RLS 並設定了以下策略：
-    1.  **個人存取策略**：允許使用者對其自己的提示詞進行所有操作（`INSERT`, `SELECT`, `UPDATE`, `DELETE`）。
-        -   `CREATE POLICY "Allow individual access to interactions" ON public.prompts FOR ALL USING (auth.uid() = user_id);`
-    2.  **公開讀取策略**：允許任何訪客（包括未登入者）讀取（`SELECT`）所有提示詞，以便在首頁輪播中展示。
-        -   `CREATE POLICY "Public prompts are viewable by everyone." ON public.prompts FOR SELECT USING (true);`
-        -   **注意**：這條策略是實現首頁公開展示功能的關鍵。
+-   **行級安全性 (Row Level Security - RLS)**：所有資料表的 RLS 與欄位授權，統一定義在
+    `supabase/migrations/20260908000000_security_hardening.sql`，請以該檔案為準（見下方第 6 節）。
+    `prompts` 的重點是：任何人可讀取（首頁與 community 需要），但只有本人能刪除自己的紀錄，
+    且 `response` 欄位不對前端開放。
 
 ### `ideas` 資料表
 
@@ -180,3 +178,32 @@ SUPABASE_SERVICE_KEY="your_supabase_service_role_key"
 5.  **Actions**: 預設會設定在已用 50%, 90%, 100% 時通知您。保留預設即可。
 6.  勾選 **"Email alerts to billing admins and users"**。
 7.  點擊 **FINISH**。
+
+---
+
+## 6. 資安設定 (Security)
+
+所有 RLS policy、欄位層級授權與用量額度，集中定義在：
+
+```
+supabase/migrations/20260908000000_security_hardening.sql
+```
+
+請在 **Supabase Dashboard > SQL Editor** 執行一次。內容具冪等性，重複執行安全。
+
+### 重點設計
+
+-   **`usage_log` 資料表**：append-only 的用量紀錄，與 `prompts` 分離。
+    額度若是靠數 `prompts` 的筆數計算，使用者只要刪掉自己的紀錄就能把當日額度歸零。
+    此表沒有任何 RLS policy，等同於前端完全無法存取，只有 service_role 能讀寫。
+
+-   **`consume_quota()` / `release_quota()`**：額度的檢查與扣除在同一個交易內完成，
+    並用 advisory lock 讓同一使用者的並發請求排隊 —— 否則同時送出的多個請求會全部
+    通過檢查，各自呼叫一次 Gemini。兩個函式都只授權給 service_role 執行。
+
+-   **欄位層級授權**：RLS 只能控制「列」，擋不住欄位。`users.email` 與
+    `prompts.response` 前端從未使用，直接從 `anon` / `authenticated` 收回 SELECT 權限。
+    因此前端查詢**不可以使用 `select('*')`** 於 `users` 與 `prompts`，必須列出欄位名稱。
+
+-   **寫入路徑**：`ideas` / `reports` / `steps` / `users` 前端一律唯讀，
+    所有寫入都經由伺服器端的 service_role client。
