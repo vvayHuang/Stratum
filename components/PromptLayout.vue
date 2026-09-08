@@ -83,6 +83,8 @@
         </div>
       </div>
     </div>
+
+    <AlertModal ref="alertModal" />
   </div>
 </template>
 
@@ -93,6 +95,7 @@ import gsap from "gsap";
 import ReportContainer from "./ReportContainer.vue";
 import Button from "./Button.vue";
 import IconButton from "./IconButton.vue";
+import AlertModal from "./AlertModal.vue";
 
 const props = defineProps({
   prompt: {
@@ -124,6 +127,7 @@ const cardDescriptionWrapper = ref(null);
 const generateGuideBtnWrapper = ref(null);
 const generateGuideTextWrapper = ref(null);
 const isGenerating = ref(false);
+const alertModal = ref(null);
 
 const marqueeContainer = ref(null);
 let marqueeTimeline = null; // Store timeline reference
@@ -253,8 +257,10 @@ const generateGuide = async () => {
     });
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ error: "Invalid JSON response" }));
-      throw new Error(errorData.error || "Failed to fetch response from Gemini");
+      const errorData = await res.json().catch(() => ({}));
+      const err = new Error(errorData.error || "Failed to generate guide. Please try again later.");
+      err.status = res.status;
+      throw err;
     }
 
     const data = await res.json();
@@ -262,7 +268,13 @@ const generateGuide = async () => {
     emit('update:idea', { ...currentIdea.value, reports: data.guide });
   } catch (e) {
     console.error("Error in generateGuide:", e);
-    // Optionally, set an error state to show in the UI
+
+    const isRateLimited = e.status === 429;
+    alertModal.value?.open({
+      icon: isRateLimited ? "hourglass_empty" : "error",
+      title: isRateLimited ? "Daily limit reached" : "Something went wrong",
+      message: e.message,
+    });
   } finally {
     isGenerating.value = false;
   }

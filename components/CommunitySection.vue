@@ -126,8 +126,15 @@ const animateOut = () => {
   return tl;
 };
 
+// animateOut 之後區塊會停在 autoAlpha: 0，若流程中斷（例如產生 ideas 失敗）
+// 必須還原，否則頁面下半部會是一片空白。
+const resetAnimation = () => {
+  if (!container.value) return;
+  gsap.set(container.value, { y: 0, autoAlpha: 1 });
+};
 
-defineExpose({ animateOut });
+
+defineExpose({ animateOut, resetAnimation });
 </script>
 
 <style scoped>

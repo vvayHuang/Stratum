@@ -21,6 +21,8 @@
     </main>
 
     <Footer />
+
+    <AlertModal ref="alertModal" />
   </div>
 </template>
 
@@ -32,6 +34,7 @@ import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import CommunitySection from "~/components/CommunitySection.vue";
 import Footer from "~/components/Footer.vue";
+import AlertModal from "~/components/AlertModal.vue";
 import type { Database } from '~/types/database.types';
 
 definePageMeta({
@@ -40,6 +43,7 @@ definePageMeta({
 
 const router = useRouter();
 const heroComponent = ref(null);
+const alertModal = ref(null);
 const communitySection = ref(null);
 const isLoading = ref(false);
 
@@ -115,8 +119,10 @@ const handleShowMoney = async (p) => {
 
     if (!res.ok) {
       console.error("Fetch response not OK:", res);
-      const errorData = await res.json().catch(() => ({ error: "Invalid JSON response" }));
-      throw new Error(errorData.error || "Failed to fetch response from Gemini");
+      const errorData = await res.json().catch(() => ({}));
+      const err: any = new Error(errorData.error || "Failed to generate ideas. Please try again later.");
+      err.status = res.status;
+      throw err;
     }
 
     const data = await res.json();
@@ -140,10 +146,19 @@ const handleShowMoney = async (p) => {
 
   } catch (e: any) {
     console.error("Error in handleShowMoney:", e);
-    // If something fails, reset the loading state so the user isn't stuck
     isLoading.value = false;
-    // Optionally show an error message to the user
-    alert("An error occurred: " + e.message);
+
+    // handleShowMoney 一開始就把 hero 與社群區塊動畫移出畫面，
+    // 中途失敗時必須還原，否則使用者會回到一個空白的首頁。
+    heroComponent.value?.resetAnimation();
+    communitySection.value?.resetAnimation();
+
+    const isRateLimited = e.status === 429;
+    alertModal.value?.open({
+      icon: isRateLimited ? "hourglass_empty" : "error",
+      title: isRateLimited ? "Daily limit reached" : "Something went wrong",
+      message: e.message,
+    });
   }
 };
 </script>
