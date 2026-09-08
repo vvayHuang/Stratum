@@ -29,37 +29,46 @@
     <div class="flex items-center gap-8">
 
       <!-- User Info / Login -->
-      <div class="flex items-center">
-        <!-- Authenticated State -->
-        <div v-if="user" class="relative">
-          <button ref="dropdownButtonRef" @click="isDropdownOpen = !isDropdownOpen"
-            class="flex items-center gap-2 cursor-pointer">
-            <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
-            <span class="hidden font-medium lg:block text-m">{{ user.user_metadata.full_name }}</span>
-          </button>
+      <!-- 包在 ClientOnly 裡：session 是登入後才在瀏覽器端建立的，SSR 時
+           user 必為 null，直接渲染會與 client 端 hydrate 的結果對不起來。 -->
+      <ClientOnly>
+        <template #fallback>
+          <!-- 佔位，高度對齊頭像與 Login 按鈕，避免首次繪製時版面跳動 -->
+          <div class="w-10 h-10" aria-hidden="true" />
+        </template>
 
-          <!-- Dropdown Menu -->
-          <div ref="dropdownMenuRef" v-if="isDropdownOpen"
-            class="absolute right-0 my-2 w-64 bg-light-surface-container text-light-on-surface rounded-xl shadow-lg z-20 overflow-hidden">
-            <NuxtLink to="/my-ideas"
-              class="flex items-center w-full px-6 py-4 text-l text-left hover:bg-light-surface-variant hover:bg-opacity-50 transition-colors"
-              @click="isDropdownOpen = false">
-              <MaterialIcon name="emoji_objects" class="mr-4" />
-              My Ideas
-            </NuxtLink>
-            <button @click="handleSignOut"
-              class="flex items-center w-full px-6 py-4 text-l text-left hover:bg-light-surface-variant hover:bg-opacity-50 transition-colors">
-              <MaterialIcon name="logout" class="mr-4" />
-              Sign out
+        <div class="flex items-center">
+          <!-- Authenticated State -->
+          <div v-if="user" class="relative">
+            <button ref="dropdownButtonRef" @click="isDropdownOpen = !isDropdownOpen"
+              class="flex items-center gap-2 cursor-pointer">
+              <img :src="user.user_metadata.avatar_url" alt="User Avatar" class="w-10 h-10 rounded-full" />
+              <span class="hidden font-medium lg:block text-m">{{ user.user_metadata.full_name }}</span>
             </button>
+
+            <!-- Dropdown Menu -->
+            <div ref="dropdownMenuRef" v-if="isDropdownOpen"
+              class="absolute right-0 my-2 w-64 bg-light-surface-container text-light-on-surface rounded-xl shadow-lg z-20 overflow-hidden">
+              <NuxtLink to="/my-ideas"
+                class="flex items-center w-full px-6 py-4 text-l text-left hover:bg-light-surface-variant hover:bg-opacity-50 transition-colors"
+                @click="isDropdownOpen = false">
+                <MaterialIcon name="emoji_objects" class="mr-4" />
+                My Ideas
+              </NuxtLink>
+              <button @click="handleSignOut"
+                class="flex items-center w-full px-6 py-4 text-l text-left hover:bg-light-surface-variant hover:bg-opacity-50 transition-colors">
+                <MaterialIcon name="logout" class="mr-4" />
+                Sign out
+              </button>
+            </div>
           </div>
+          <!-- Unauthenticated State -->
+          <NuxtLink v-else to="/login"
+            class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
+            Login
+          </NuxtLink>
         </div>
-        <!-- Unauthenticated State -->
-        <NuxtLink v-else to="/login"
-          class="px-4 py-2.5 font-medium text-m bg-light-primary text-light-on-primary rounded-xl hover:bg-opacity-90 transition-colors">
-          Login
-        </NuxtLink>
-      </div>
+      </ClientOnly>
     </div>
 
 
