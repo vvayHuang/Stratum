@@ -79,7 +79,7 @@
     </main>
 
 
-    <DeleteConfirmationModal ref="deleteModal" @confirm="confirmDelete" />
+    <Dialog ref="dialog" />
   </div>
 </template>
 
@@ -88,7 +88,7 @@ import { ref, computed, watch } from 'vue';
 import { useSupabaseUser, useSupabaseClient } from '#imports';
 import Navbar from '~/components/Navbar.vue';
 import IconButton from '~/components/IconButton.vue';
-import DeleteConfirmationModal from '~/components/DeleteConfirmationModal.vue';
+import Dialog from '~/components/Dialog.vue';
 
 definePageMeta({
   middleware: ['auth'] // Protect this route
@@ -101,8 +101,7 @@ const userPrompts = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 const displayLimit = ref(16);
-const deleteModal = ref(null);
-const promptToDeleteId = ref(null);
+const dialog = ref(null);
 
 const displayedPrompts = computed(() => {
   return userPrompts.value.slice(0, displayLimit.value);
@@ -175,30 +174,34 @@ const formatTimeAgo = (dateString) => {
   return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
 };
 
-const deletePrompt = (id) => {
-  promptToDeleteId.value = id;
-  deleteModal.value.openModal();
-};
-
-const confirmDelete = async () => {
-  if (!promptToDeleteId.value) return;
+const deletePrompt = async (id) => {
+  const confirmed = await dialog.value?.open({
+    icon: 'warning',
+    title: 'Are you sure you want to delete this idea?',
+    message: 'This action cannot be undone. This will permanently delete the idea and remove it from your dashboard.',
+    confirmLabel: 'Delete',
+    confirmVariant: 'error',
+    cancelLabel: 'Cancel',
+  });
+  if (!confirmed) return;
 
   try {
     const { error: deleteError } = await supabase
       .from('prompts')
       .delete()
-      .eq('id', promptToDeleteId.value);
+      .eq('id', id);
 
     if (deleteError) throw deleteError;
 
     // Remove from local state
-    userPrompts.value = userPrompts.value.filter(p => p.id !== promptToDeleteId.value);
-
-    // Reset state
-    promptToDeleteId.value = null;
+    userPrompts.value = userPrompts.value.filter(p => p.id !== id);
   } catch (e) {
     console.error('Error deleting prompt:', e);
-    // Optionally show an error toast here
+    dialog.value?.open({
+      icon: 'error',
+      title: 'Something went wrong',
+      message: 'Failed to delete this idea. Please try again.',
+    });
   }
 };
 </script>

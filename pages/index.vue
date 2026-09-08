@@ -22,7 +22,7 @@
 
     <Footer />
 
-    <AlertModal ref="alertModal" />
+    <Dialog ref="dialog" />
   </div>
 </template>
 
@@ -34,7 +34,7 @@ import Navbar from "~/components/Navbar.vue";
 import Hero from "~/components/Hero.vue";
 import CommunitySection from "~/components/CommunitySection.vue";
 import Footer from "~/components/Footer.vue";
-import AlertModal from "~/components/AlertModal.vue";
+import Dialog from "~/components/Dialog.vue";
 import type { Database } from '~/types/database.types';
 
 definePageMeta({
@@ -43,7 +43,7 @@ definePageMeta({
 
 const router = useRouter();
 const heroComponent = ref(null);
-const alertModal = ref(null);
+const dialog = ref(null);
 const communitySection = ref(null);
 const isLoading = ref(false);
 
@@ -154,7 +154,7 @@ const handleShowMoney = async (p) => {
     communitySection.value?.resetAnimation();
 
     const isRateLimited = e.status === 429;
-    alertModal.value?.open({
+    dialog.value?.open({
       icon: isRateLimited ? "hourglass_empty" : "error",
       title: isRateLimited ? "Daily limit reached" : "Something went wrong",
       message: e.message,

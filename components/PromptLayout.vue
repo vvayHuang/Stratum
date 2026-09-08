@@ -84,7 +84,7 @@
       </div>
     </div>
 
-    <AlertModal ref="alertModal" />
+    <Dialog ref="dialog" />
   </div>
 </template>
 
@@ -95,7 +95,7 @@ import gsap from "gsap";
 import ReportContainer from "./ReportContainer.vue";
 import Button from "./Button.vue";
 import IconButton from "./IconButton.vue";
-import AlertModal from "./AlertModal.vue";
+import Dialog from "./Dialog.vue";
 
 const props = defineProps({
   prompt: {
@@ -127,7 +127,7 @@ const cardDescriptionWrapper = ref(null);
 const generateGuideBtnWrapper = ref(null);
 const generateGuideTextWrapper = ref(null);
 const isGenerating = ref(false);
-const alertModal = ref(null);
+const dialog = ref(null);
 
 const marqueeContainer = ref(null);
 let marqueeTimeline = null; // Store timeline reference
@@ -270,7 +270,7 @@ const generateGuide = async () => {
     console.error("Error in generateGuide:", e);
 
     const isRateLimited = e.status === 429;
-    alertModal.value?.open({
+    dialog.value?.open({
       icon: isRateLimited ? "hourglass_empty" : "error",
       title: isRateLimited ? "Daily limit reached" : "Something went wrong",
       message: e.message,
