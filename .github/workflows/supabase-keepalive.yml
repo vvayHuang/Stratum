@@ -1,10 +1,12 @@
 name: Supabase keepalive
 
-# Free-tier Supabase projects are paused after 7 days without activity.
-# Run a tiny read against the database twice a week to stay well inside that window.
+# Free-tier Supabase projects are paused when they get too little database
+# activity over a 7-day window; Supabase suggests a few requests every day.
+# Run a tiny read against the database several times a day. GitHub may delay
+# or drop scheduled runs, so the extra runs also act as a safety margin.
 on:
   schedule:
-    - cron: '17 3 * * 1,4' # Mon & Thu 03:17 UTC
+    - cron: '17 */6 * * *' # Every 6 hours at :17 UTC
   workflow_dispatch:
 
 permissions: {}
